@@ -20,7 +20,7 @@ types = {"1": "다정한 친구", "2": "현실적인 선배", "3": "이성적인
 persona_type = types.get(choice, "다정한 친구")
 
 # 메타데이터에서 시스템 프롬프트 생성
-metadata = get_metadata()
+metadata = get_metadata() 
 system_prompt = build_system_prompt(metadata, persona_type)
 
 # LLM 초기화
