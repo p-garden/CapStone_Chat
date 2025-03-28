@@ -1,11 +1,21 @@
+"""
+실행 코드
+python3 chat.py \
+  --input_file data/example1.json \
+  --output_file results/result1.json \
+  --persona_type persona_20s_friend
+"""
+
 import json
 from pathlib import Path
 from agents.client_agent import ClientAgent
 from agents.counselor_agent import CounselorAgent
 from agents.evaluator_agent import EvaluatorAgent
+from agents.cbt_agent import CBTStrategyAgent
 from config import get_config
 from config import set_openai_api_key
 set_openai_api_key()
+
 class TherapySimulation:
     def __init__(self, example: dict, persona_type: str, max_turns: int = 20):
         self.example = example
@@ -18,11 +28,16 @@ class TherapySimulation:
         self.emotion_state = example["AI_client"].get("emotion_state", "")
         self.cognitive_distortion = example["AI_client"].get("cognitive_distortion", "")
 
+        #CBT 전략 먼저 생성
+        self.cbt_strategy_agent = CBTStrategyAgent(example, self.cognitive_distortion)
+        self.cbt_technique, self.cbt_strategy = self.cbt_strategy_agent.generate()
+
+
         self.counselor_agent = CounselorAgent(
             client_info=example["AI_counselor"]["Response"]["client_information"],
             reason=example["AI_counselor"]["Response"]["reason_counseling"],
-            cbt_technique=example["AI_counselor"]["CBT"].get("technique", ""),
-            cbt_strategy=example["AI_counselor"]["CBT"].get("strategy", ""),
+            cbt_technique=self.cbt_technique,
+            cbt_strategy=self.cbt_strategy,
             persona_type=persona_type,
             emotion=self.emotion_state,
             distortion=self.cognitive_distortion
