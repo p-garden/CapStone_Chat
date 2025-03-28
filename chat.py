@@ -1,81 +1,86 @@
-from langchain_openai import ChatOpenAI
-from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import HumanMessage, AIMessage
-from vector_store import save_summary, get_metadata
-from prompt_builder import build_system_prompt
-from emotion_utils import emotion_keywords
 import json
-import os
+from pathlib import Path
+from agents.client_agent import ClientAgent
+from agents.counselor_agent import CounselorAgent
+from agents.evaluator_agent import EvaluatorAgent
+from config import get_config
+from config import set_openai_api_key
+set_openai_api_key()
+class TherapySimulation:
+    def __init__(self, example: dict, persona_type: str, max_turns: int = 20):
+        self.example = example
+        self.persona_type = persona_type
+        self.max_turns = max_turns
+        self.history = []
+        self.metadata = get_config()
 
-print("\U0001F46D 상담 스타일을 선택하세요:")
-print("1. 다정한 친구")
-print("2. 현실적인 선배")
-print("3. 이성적인 조언가")
-choice = input("\U0001F449 선택 (1 ~ 3): ")
+        self.client_agent = ClientAgent(example["AI_client"])
+        self.emotion_state = example["AI_client"].get("emotion_state", "")
+        self.cognitive_distortion = example["AI_client"].get("cognitive_distortion", "")
 
-# 페르소나 선택
-types = {"1": "다정한 친구", "2": "현실적인 선배", "3": "이성적인 조언가"}
-persona_type = types.get(choice, "다정한 친구")
+        self.counselor_agent = CounselorAgent(
+            client_info=example["AI_counselor"]["Response"]["client_information"],
+            reason=example["AI_counselor"]["Response"]["reason_counseling"],
+            cbt_technique=example["AI_counselor"]["CBT"].get("technique", ""),
+            cbt_strategy=example["AI_counselor"]["CBT"].get("strategy", ""),
+            persona_type=persona_type,
+            emotion=self.emotion_state,
+            distortion=self.cognitive_distortion
+        )
+        self.evaluator_agent = EvaluatorAgent()
 
-# 메타데이터에서 시스템 프롬프트 생성
-metadata = get_metadata() 
-system_prompt = build_system_prompt(metadata, persona_type)
+        self._init_history()
 
-# LLM 초기화
-llm = ChatOpenAI(model="gpt-4o-mini-2024-07-18", temperature=0.7)
-
-# 프롬프트 템플릿 정의
-prompt = ChatPromptTemplate.from_messages([
-    ("system", system_prompt),
-    MessagesPlaceholder(variable_name="history"),
-    ("human", "{input}")
-])
-
-# 세션별 메모리 저장소
-store = {}
-
-# Runnable 체인 정의 대화내용 전체저장 휘발성 메모리
-chain = RunnableWithMessageHistory(
-    prompt | llm,
-    lambda session_id: store.setdefault(session_id, ChatMessageHistory()),
-    input_messages_key="input",
-    history_messages_key="history"
-)
-
-# 세션 ID 설정
-session_id = "default"
-
-# 대화 루프
-while True:
-    user_input = input("\U0001F464 나: ")
-    if user_input.lower() == "exit":
-        full_history = store[session_id].messages
-        full_log = [
-            {"role": "user" if isinstance(m, HumanMessage) else "bot", "content": m.content}
-            for m in full_history
+    def _init_history(self):
+        init_counselor = self.example["AI_counselor"]["CBT"]["init_history_counselor"]
+        init_client = self.example["AI_counselor"]["CBT"]["init_history_client"]
+        self.history = [
+            {"role": "counselor", "message": init_counselor},
+            {"role": "client", "message": init_client},
         ]
-        os.makedirs("vector_store", exist_ok=True)
-        with open("vector_store/chat_log.json", "w", encoding="utf-8") as f:
-            json.dump(full_log, f, ensure_ascii=False, indent=2)
-        break
 
-    response = chain.invoke({
-        "input": user_input,
-        "persona_type": persona_type
-    }, config={"configurable": {"session_id": session_id}})
+    def _add(self, role, message):
+        self.history.append({"role": role, "message": message})
 
-    print(f"\U0001F916 {persona_type}: {response.content}")
+    def run(self):
+        for _ in range(self.max_turns):
+            counselor_msg = self.counselor_agent.generate_response(self.history)
+            self._add("counselor", counselor_msg)
 
-    found_emotions = [e for e in emotion_keywords if e in f"{user_input} {response.content}"]
-    save_summary(f"User: {user_input}\nBot: {response.content}", found_emotions)
+            client_msg = self.client_agent.generate(
+                self.example["AI_client"]["intake_form"],
+                self.example["AI_client"]["attitude_instruction"],
+                "\n".join(f"{m['role'].capitalize()}: {m['message']}" for m in self.history)
+            )
+            self._add("client", client_msg)
 
-    full_history = store[session_id].messages
-    full_log = [
-        {"role": "user" if isinstance(m, HumanMessage) else "bot", "content": m.content}
-        for m in full_history
-    ]
-    os.makedirs("vector_store", exist_ok=True)
-    with open("vector_store/chat_log.json", "w", encoding="utf-8") as f:
-        json.dump(full_log, f, ensure_ascii=False, indent=2)
+            if "[/END]" in client_msg:
+                self.history[-1]["message"] = client_msg.replace("[/END]", "")
+                break
+
+        return {
+            "persona": self.persona_type,
+            "cbt_strategy": self.counselor_agent.cbt_strategy,
+            "cbt_technique": self.counselor_agent.cbt_technique,
+            "cognitive_distortion": self.cognitive_distortion,
+            "history": self.history,
+            "evaluation": self.evaluator_agent.evaluate(self.history),
+        }
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_file", required=True)
+    parser.add_argument("--output_file", required=True)
+    parser.add_argument("--persona_type", required=True)
+    args = parser.parse_args()
+
+    with open(args.input_file, "r", encoding="utf-8") as f:
+        example = json.load(f)
+
+    sim = TherapySimulation(example, args.persona_type)
+    result = sim.run()
+
+    Path(args.output_file).parent.mkdir(parents=True, exist_ok=True)
+    with open(args.output_file, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)

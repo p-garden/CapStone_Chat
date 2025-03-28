@@ -1,0 +1,32 @@
+Given the following client background, presenting problem, and identified cognitive distortion, select the most appropriate CBT technique and generate a personalized strategy that the counselor can use in the next session.
+
+[Client Information]
+{client_information}
+
+[Reason for Counseling]
+{reason_counseling}
+
+[Dialogue History]
+{history}
+
+[Cognitive Distortion]
+{cognitive_distortion} 
+
+[List of Possible CBT Techniques]
+- Efficiency Evaluation
+- Pie Chart Technique
+- Alternative Perspective
+- Decatastrophizing
+- Pros and Cons Analysis
+- Evidence-Based Questioning
+- Reality Testing
+- Continuum Technique
+- Changing Rules to Wishes
+- Behavior Experiment
+- Problem-Solving Skills Training
+- Systematic Exposure
+
+
+Your output:
+CBT Technique: <Selected Technique>
+CBT Strategy: <Explain how this technique will be used with this client>

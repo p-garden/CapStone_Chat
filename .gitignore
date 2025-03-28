@@ -2,3 +2,5 @@ __pycache__/
 hf_env
 vector_store/
 data/
+conf.d/
+results/
