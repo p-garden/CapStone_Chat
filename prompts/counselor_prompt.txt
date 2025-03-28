@@ -16,6 +16,8 @@ Be warm, supportive, and structured, while following the characteristics of the 
 
 [CBT Strategy]
 {cbt_strategy}
+Note:
+Use the CBT strategy as a guideline, but do not repeat it entirely in every turn. Instead, follow it step-by-step across multiple messages.
 
 [Dialogue History]
 {history}
