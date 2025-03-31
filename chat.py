@@ -7,6 +7,7 @@ python3 chat.py \
 """
 
 import json
+import os
 from pathlib import Path
 from agents.client_agent import ClientAgent
 from agents.counselor_agent import CounselorAgent
@@ -32,6 +33,8 @@ class TherapySimulation:
         self.cbt_strategy_agent = CBTStrategyAgent(example, self.cognitive_distortion)
         self.cbt_technique, self.cbt_strategy = self.cbt_strategy_agent.generate()
 
+        self.criteria_list = ["general_1", "general_2", "general_3", "cbt_1", "cbt_2", "cbt_3"]  # 평가 기준 리스트 정의
+        self.evaluator_agent = EvaluatorAgent(criteria_list=self.criteria_list)  # criteria_list 전달
 
         self.counselor_agent = CounselorAgent(
             client_info=example["AI_counselor"]["Response"]["client_information"],
@@ -42,7 +45,6 @@ class TherapySimulation:
             emotion=self.emotion_state,
             distortion=self.cognitive_distortion
         )
-        self.evaluator_agent = EvaluatorAgent()
 
         self._init_history()
 
@@ -80,14 +82,17 @@ class TherapySimulation:
                 break
 
         self._save_chat_log()  # Save the chat log after the simulation
+        # Get evaluation from the evaluator agent
+        evaluation_result = self.evaluator_agent.evaluate_all(self.history)
+    
         return {
             "persona": self.persona_type,
             "cbt_strategy": self.counselor_agent.cbt_strategy,
             "cbt_technique": self.counselor_agent.cbt_technique,
             "cognitive_distortion": self.cognitive_distortion,
             "history": self.history,
-            "evaluation": self.evaluator_agent.evaluate(self.history),
-        }
+            "evaluation": evaluation_result,  # Evaluation results from the evaluator agent
+            }
 
 if __name__ == "__main__":
     import argparse
