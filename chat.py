@@ -57,6 +57,12 @@ class TherapySimulation:
     def _add(self, role, message):
         self.history.append({"role": role, "message": message})
 
+    def _save_chat_log(self):
+        log_filename = "logs/chat_log.json"
+        log_data = [{"role": m["role"], "message": m["message"]} for m in self.history]
+        with open(log_filename, "w", encoding="utf-8") as f:
+            json.dump(log_data, f, ensure_ascii=False, indent=2)
+
     def run(self):
         for _ in range(self.max_turns):
             counselor_msg = self.counselor_agent.generate_response(self.history)
@@ -73,6 +79,7 @@ class TherapySimulation:
                 self.history[-1]["message"] = client_msg.replace("[/END]", "")
                 break
 
+        self._save_chat_log()  # Save the chat log after the simulation
         return {
             "persona": self.persona_type,
             "cbt_strategy": self.counselor_agent.cbt_strategy,

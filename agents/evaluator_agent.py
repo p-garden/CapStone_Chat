@@ -22,7 +22,7 @@ class EvaluatorAgent:
         results = {}
         for criteria in criteria_list:
             self.criteria_name = criteria
-            self.prompt_text = load_prompt(f"eval_{criteria}.txt")
+            self.prompt_text = load_prompt(f"evaluation_{criteria}.txt")
             self.template = PromptTemplate(
                 input_variables=["conversation"],
                 template=self.prompt_text,

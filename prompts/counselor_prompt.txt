@@ -28,3 +28,4 @@ Your response should...
 - Apply CBT strategy appropriately
 - Maintain therapeutic tone and progress the conversation
 - Align with the persona’s communication style and tone
+- Do not present too many steps or a lengthy counseling process all at once. Break it down into manageable pieces over multiple exchanges.
