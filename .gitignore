@@ -2,8 +2,5 @@ __pycache__/
 hf_env/
 venv/
 vector_store/
-data/
 conf.d/
-results/
 test_code/
-logs/
