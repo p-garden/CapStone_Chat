@@ -1,36 +1,34 @@
 from pathlib import Path
-from langchain.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
+from openai import OpenAI
 import os
-from openai import OpenAI  # ✅ 이 줄이 꼭 필요해!
-from cbt.cbt_mappings import emotion_strategies, cognitive_distortion_strategies
 import re
+from cbt.cbt_mappings import emotion_strategies, cognitive_distortion_strategies
+import json
 
+# 'subllm_prompt.txt' 파일 로드하는 함수
 def load_prompt(file_name):
-        prompt_path = Path(__file__).resolve().parent.parent / "prompts" / file_name
-        with open(prompt_path, 'r', encoding='utf-8') as f:
-            return f.read()
+    prompt_path = Path(__file__).resolve().parent.parent / "prompts" / file_name
+    with open(prompt_path, 'r', encoding='utf-8') as f:
+        return f.read()
 
+# SubLLMAgent 클래스
 class SubLLMAgent:
-    from pathlib import Path
-            
-    def __init__(self, model="gpt-4"):
-        api_key = os.getenv("OPENAI_API_KEY")
-        self.client = OpenAI(api_key=api_key)
-        self.prompt_template = load_prompt("subllm_prompt.txt")
+    def __init__(self, model="gpt-4o-mini"):
+        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.model = model
+        self.prompt_template = load_prompt("subllm_prompt.txt")  # 'subllm_prompt.txt'를 로드
 
     def analyze(self, user_input: str) -> dict:
-        prompt = self.prompt_template.format(text=user_input)
+        # 'subllm_prompt.txt'를 기반으로 하는 프롬프트 생성
+        prompt = self.prompt_template.format(text=user_input)  # 사용자 입력을 프롬프트에 삽입
 
+        # OpenAI API 호출
         response = self.client.chat.completions.create(
             model=self.model,
             temperature=0.4,
             max_tokens=1000,
-            messages=[
-                {"role": "system", "content": "너는 인지행동치료 기반의 심리상담 보조 전문가야."},
-                {"role": "user", "content": prompt}
-            ]
+            messages=[{"role": "system", "content": "너는 인지행동치료 기반의 심리상담 보조 전문가야."},
+                      {"role": "user", "content": prompt}]
         )
 
         raw_text = response.choices[0].message.content
@@ -42,18 +40,34 @@ class SubLLMAgent:
         distortion = ""
         distortion_strategy = ""
 
-        # 감정 추출
+        # 감정 추출 (감정: '슬픔', '기쁨' 등)
         emotion_match = re.search(r"감정:\s*(\S+)", response)
         if emotion_match:
             emotion = emotion_match.group(1).strip()
-            emotion_strategy = emotion_strategies.get(emotion, "")
+            emotion_strategy = emotion_strategies.get(emotion, "감정 전략을 찾을 수 없습니다.")
 
-        # 인지 왜곡 추출
-        distortion_match = re.search(r"인지 왜곡:\s*(\S+)", response)
-        if distortion_match:
-            distortion = distortion_match.group(1).strip()
-            distortion_strategy = cognitive_distortion_strategies.get(distortion, "")
+        # 인지 왜곡 추출 및 CBT 전략 매핑
+        distortion_matches = re.findall(r"인지 왜곡:\s*([^,]+(?:,\s*[^,]+)*)", response)
 
+        if distortion_matches:
+            # 왜곡 이름 리스트로 정리
+            distortions = [d.strip() for d in distortion_matches[0].split(',')]
+
+            # 각 왜곡에 대해 전략 가져오기
+            distortion_strategy_list = [
+                cognitive_distortion_strategies.get(d, f"{d}에 대한 전략을 찾을 수 없습니다.")
+                for d in distortions
+            ]
+
+            distortion = ", ".join(distortions)
+            distortion_strategy = " | ".join(distortion_strategy_list)
+        else:
+            distortion = "없음"
+            distortion_strategy = "인지 왜곡 전략을 찾을 수 없습니다."
+
+
+
+        # 최종 반환할 JSON 형식으로 결과를 생성
         return {
             "감정": emotion,
             "감정_CBT전략": emotion_strategy,

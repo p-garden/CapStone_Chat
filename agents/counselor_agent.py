@@ -25,10 +25,13 @@ class CounselorAgent:
             return f.read()
 
     def generate_response(self, history):
+        # history를 문자열로 변환
+        formatted_history = "\n".join([f"{msg['role'].capitalize()}: {msg['message']}" for msg in history])
+
         filled_prompt = self.prompt_template.format(
             client_info=self.client_info,
             reason=self.reason,
-            history=history,
+            history=formatted_history,  # 변환된 문자열 사용
             cbt_technique=self.cbt_technique,
             cbt_strategy=self.cbt_strategy,
             persona_prompt=self.persona_prompt,
