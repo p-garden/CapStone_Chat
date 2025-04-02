@@ -12,9 +12,9 @@ from pathlib import Path
 from agents.client_agent import ClientAgent
 from agents.counselor_agent import CounselorAgent
 from agents.evaluator_agent import EvaluatorAgent
-from agents.cbt_agent import CBTStrategyAgent
-from config import get_config
-from config import set_openai_api_key
+from agents.sub_llm import SubLLMAgent
+from config import get_config, set_openai_api_key
+
 set_openai_api_key()
 
 class TherapySimulation:
@@ -26,27 +26,41 @@ class TherapySimulation:
         self.metadata = get_config()
 
         self.client_agent = ClientAgent(example["AI_client"])
-        self.emotion_state = example["AI_client"].get("emotion_state", "")
-        self.cognitive_distortion = example["AI_client"].get("cognitive_distortion", "")
 
-        #CBT 전략 먼저 생성
-        self.cbt_strategy_agent = CBTStrategyAgent(example, self.cognitive_distortion)
-        self.cbt_technique, self.cbt_strategy = self.cbt_strategy_agent.generate()
+        # 🔹 SubLLM 분석 결과 반영
+        self.subllm_agent = SubLLMAgent()
+        analysis_result = self.subllm_agent.analyze(example["AI_counselor"]["CBT"]["init_history_client"])
 
-        self.criteria_list = ["general_1", "general_2", "general_3", "cbt_1", "cbt_2", "cbt_3"]  # 평가 기준 리스트 정의
-        self.evaluator_agent = EvaluatorAgent(criteria_list=self.criteria_list)  # criteria_list 전달
+        # 보조 LLM(SubLLMAgent) 호출로 감정 및 인지왜곡 분석
+        self.analysis_result = self.subllm_agent.analyze(example["AI_client"]["init_history"])
+
+        self.emotion_state = self.analysis_result.get("감정", "")
+        self.cognitive_distortion = self.analysis_result.get("인지왜곡", "")
+        self.cbt_strategy = self.analysis_result.get("감정_CBT전략", "") or self.analysis_result.get("인지왜곡_CBT전략", "")
+        self.cbt_technique = ""  # ✅ 여기 추가!
+        self.llm_raw_response = self.analysis_result.get("원본문", "")
+
+        self.criteria_list = ["general_1", "general_2", "general_3", "cbt_1", "cbt_2", "cbt_3"]
+        self.evaluator_agent = EvaluatorAgent(criteria_list=self.criteria_list)
 
         self.counselor_agent = CounselorAgent(
             client_info=example["AI_counselor"]["Response"]["client_information"],
             reason=example["AI_counselor"]["Response"]["reason_counseling"],
-            cbt_technique=self.cbt_technique,
+            cbt_technique="",  # 별도 필드 없다면 공란 처리
             cbt_strategy=self.cbt_strategy,
             persona_type=persona_type,
             emotion=self.emotion_state,
             distortion=self.cognitive_distortion
         )
 
+
         self._init_history()
+
+    def extract_field(self, text, field):
+        for line in text.splitlines():
+            if line.startswith(f"{field}:"):
+                return line.split(":", 1)[1].strip()
+        return ""
 
     def _init_history(self):
         init_counselor = self.example["AI_counselor"]["CBT"]["init_history_counselor"]
@@ -81,18 +95,18 @@ class TherapySimulation:
                 self.history[-1]["message"] = client_msg.replace("[/END]", "")
                 break
 
-        self._save_chat_log()  # Save the chat log after the simulation
-        # Get evaluation from the evaluator agent
+        self._save_chat_log()
         evaluation_result = self.evaluator_agent.evaluate_all(self.history)
-    
+
         return {
             "persona": self.persona_type,
-            "cbt_strategy": self.counselor_agent.cbt_strategy,
-            "cbt_technique": self.counselor_agent.cbt_technique,
+            "cbt_strategy": self.cbt_strategy,
+            "cbt_technique": self.cbt_technique,
             "cognitive_distortion": self.cognitive_distortion,
+            "emotion": self.emotion_state,
             "history": self.history,
-            "evaluation": evaluation_result,  # Evaluation results from the evaluator agent
-            }
+            "evaluation": evaluation_result,
+        }
 
 if __name__ == "__main__":
     import argparse

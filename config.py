@@ -28,8 +28,8 @@ def get_config():
         }
     }
 def load_config():
-    config_path = Path(__file__).parents[1] /"CAPSTONE" / "conf.d" / "config.yaml"
-    with open(config_path, 'r') as f:
+    config_path = Path(__file__).parent / "conf.d" / "config.yaml"
+    with open(config_path, 'r', encoding='utf-8') as f:
         return yaml.safe_load(f)
 
 def set_openai_api_key():
