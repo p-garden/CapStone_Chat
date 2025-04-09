@@ -1,3 +1,4 @@
+
 """1
  ssh -i "PG.pem" ubuntu@3.39.231.190
 cd ~/CapStone 
@@ -71,7 +72,6 @@ async def start_chat_endpoint(request: ChatRequest):
         age = request.age
         gender = request.gender
 
-    # 채팅 시작
     output_file = f"results/{uuid.uuid4().hex}.json"
     run_chat_with_args(output_file, request.persona_type, request.chat_id, request.user_id)
 
@@ -82,7 +82,6 @@ async def start_chat_endpoint(request: ChatRequest):
         "bot_response": result["history"][-1]["message"],
         "history": history  # 기존 채팅 기록 반환
     }
-
 
 
 @app.get("/get_chat_log/{chat_id}")
