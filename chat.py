@@ -1,6 +1,7 @@
 """
 실행 코드
 python3 chat.py --output_file results/result1.json --persona_type persona_20s_friend --chat_id PGchat1 --user_id PG1
+
 """
 
 import json
@@ -148,6 +149,7 @@ class TherapySimulation:
             raise HTTPException(status_code=500, detail="Error retrieving user information.")
 
 
+
 def run_chat_with_args(output_file: str, persona_type: str, chat_id: str, user_id: str):
     sim = TherapySimulation(
         persona_type=persona_type,
@@ -158,6 +160,7 @@ def run_chat_with_args(output_file: str, persona_type: str, chat_id: str, user_i
     if args.output_file is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         args.output_file = f"results/result_{timestamp}.json"
+
 
     Path(output_file).parent.mkdir(parents=True, exist_ok=True)
     with open(output_file, "w", encoding="utf-8") as f:

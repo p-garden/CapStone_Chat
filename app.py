@@ -1,4 +1,3 @@
-
 """1
  ssh -i "PG.pem" ubuntu@3.39.231.190
 cd ~/CapStone 
@@ -13,6 +12,7 @@ http://0.0.0.0:8000/docs
     "first_message": "오랜만이야",
     "persona_type": "persona_8살_민지원"}
 
+
 """
 import json
 import uuid
@@ -21,6 +21,7 @@ from pydantic import BaseModel
 from chat import run_chat_with_args
 from DB import save_user_info, get_user_info, get_chat_log, save_chat_log
 from typing import Optional
+
 
 app = FastAPI()
 
@@ -62,6 +63,7 @@ async def start_chat_endpoint(request: ChatRequest):
     else:
         history = [{"role": "client", "message": f"{name}님, 안녕하세요. 어떤 문제가 있으신가요?"}]
 
+
     # 채팅 시작
     output_file = f"outputs/{uuid.uuid4().hex}.json"
     run_chat_with_args(output_file, request.persona_type, request.chat_id, request.user_id)
@@ -74,6 +76,7 @@ async def start_chat_endpoint(request: ChatRequest):
         "bot_response": result["history"][-1]["message"],
         "history": history  # 기존 채팅 기록 반환
     }
+
 
 
 @app.get("/get_chat_log/{chat_id}")
