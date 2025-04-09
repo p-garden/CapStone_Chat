@@ -1,5 +1,4 @@
 # cbt/cbt_mappings.py
-
 # Plutchik 감정 전략 매핑
 emotion_strategies = {
     "슬픔": "활동 활성화: 의미 있는 활동을 계획하고 실행하여 기분을 개선합니다.",
