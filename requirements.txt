@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pymongo
+langchain
+langchain_openai
+pymongo

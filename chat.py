@@ -1,6 +1,6 @@
 """
 실행 코드
-python3 chat.py --output_file results/result1.json --persona_type persona_20s_friend --chat_id chat123 --user_id user123
+python3 chat.py --output_file results/result1.json --persona_type persona_20s_friend --chat_id PG123 --user_id userPG
 """
 
 import json
@@ -15,14 +15,14 @@ from DB import get_chat_log, save_chat_log, save_user_info, get_user_info  # DB.
 
 # API 키 설정
 set_openai_api_key()
-from pymongo import MongoClient
+#from pymongo import MongoClient
 
 # 연결 문자열 사용
-client = MongoClient("mongodb+srv://j2982477:EZ6t7LEsGEYmCiJK"
-"@mindAI.zgcb4ae.mongodb.net/?retryWrites=true&w=majority&appName=mindAI")
+#client = MongoClient("mongodb+srv://j2982477:EZ6t7LEsGEYmCiJK"
+#"@mindAI.zgcb4ae.mongodb.net/?retryWrites=true&w=majority&appName=mindAI")
 
 # 'mindAI' 데이터베이스에 연결
-db = client['mindAI']
+#db = client['mindAI']
 # TherapySimulation 클래스에서 사용자 정보 확인
 class TherapySimulation:
     def __init__(self, persona_type: str, chat_id: str, user_id: str, max_turns: int = 20):
@@ -71,18 +71,19 @@ class TherapySimulation:
             emotion="",
             distortion=""
         )
-
+    """
         self._init_history()
     def _init_history(self):
-        """
+        
         채팅을 위한 초기화 작업을 처리하는 메서드입니다.
         현재로서는 간단하게 'client' 역할로 기본 메시지를 설정합니다.
-        """
+        
         if not self.history:  # history가 비어 있으면 초기 메시지를 추가
             self.history.append({
                 "role": "client",
                 "message": f"{self.name}님, 안녕하세요. 어떤 문제가 있으신가요?"
             })
+    """
     def run(self):
         for turn in range(self.max_turns):
             print(f"--- Turn {turn + 1} ---")
@@ -136,6 +137,18 @@ class TherapySimulation:
             "evaluation": evaluation_result
         }
 
+def run_chat_with_args(output_file: str, persona_type: str, chat_id: str, user_id: str):
+    sim = TherapySimulation(
+        persona_type=persona_type,
+        chat_id=chat_id,
+        user_id=user_id, 
+    )    
+    result = sim.run()
+
+    Path(output_file).parent.mkdir(parents=True, exist_ok=True)
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
@@ -146,14 +159,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    sim = TherapySimulation(
-            persona_type=args.persona_type,
-            chat_id=args.chat_id,
-            user_id=args.user_id, 
-        )    
-    result = sim.run()
-
-    Path(args.output_file).parent.mkdir(parents=True, exist_ok=True)
-    with open(args.output_file, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
-
+    run_chat_with_args(args.output_file, args.persona_type, args.chat_id, args.user_id)
