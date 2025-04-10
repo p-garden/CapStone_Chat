@@ -1,15 +1,21 @@
-# FastAPI 앱을 실행할 수 있는 Python 이미지를 가져옵니다.
-FROM python:3.9-slim
+#docker build -t capstone-fastapi .
+#docker run -d -p 8000:8000 capstone-fastapi
 
-# 작업 디렉토리를 설정합니다.
+# 1. Python 기반 이미지
+FROM python:3.10-slim
+
+# 2. 작업 디렉토리 설정
 WORKDIR /app
 
-# 필요 라이브러리들을 설치합니다.
-COPY requirements.txt /app/requirements.txt
+# 3. 패키지 설치
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# FastAPI 앱을 실행할 포트를 개방합니다.
+# 4. 소스 코드 복사
+COPY . .
+
+# 5. FastAPI 기본 포트 열기
 EXPOSE 8000
 
-# FastAPI 앱을 실행합니다.
-CMD ["uvicorn", "chat:app", "--host", "0.0.0.0", "--port", "8000"]
+# 6. 앱 실행 (여기서 app:app 은 app.py 내부의 FastAPI 인스턴스를 의미)
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
