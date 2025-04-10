@@ -1,14 +1,7 @@
 """
 실행 코드
-<<<<<<< HEAD
-python3 chat.py --output_file results/result1.json --persona_type persona_20s_friend --chat_id PGchat1 --user_id PG1
-<<<<<<< HEAD
-
-=======
-=======
 python3 chat.py --output_file results/result1.json --persona_type persona_5살_민지원 --chat_id PG123 --user_id userPG
->>>>>>> 02d5bd1 (평가자 에이전트 수정및)
->>>>>>> 94a6881 (작업 중인 코드 저장)
+
 """
 
 import json
