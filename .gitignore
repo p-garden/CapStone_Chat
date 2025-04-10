@@ -8,3 +8,4 @@ vector_store.py
 logs/
 results/
 *.pem
+outputs/

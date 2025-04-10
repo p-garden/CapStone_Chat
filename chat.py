@@ -12,6 +12,8 @@ from agents.sub_llm import SubLLMAgent
 from config import get_config, set_openai_api_key
 from cbt.cbt_mappings import emotion_strategies, cognitive_distortion_strategies
 from DB import get_chat_log, save_chat_log, save_user_info, get_user_info  # DB.py에서 import
+from fastapi import FastAPI, HTTPException
+import requests
 
 # API 키 설정
 set_openai_api_key()
@@ -40,24 +42,20 @@ class TherapySimulation:
             self.age = user_info["age"]
             self.gender = user_info["gender"]
         else:
-            # If the user doesn't exist, prompt for information
-            print(f"{self.user_id}는 새로운 사용자입니다. 사용자 정보를 입력해주세요.")
-            self.name = input("이름을 입력해주세요: ")
-            self.age = int(input("나이를 입력해주세요: "))
-            self.gender = input("성별을 입력해주세요: ")
-
-            # Save new user info to DB
+            # If the user doesn't exist, receive the information via API
+            # Call the /start_chat API to collect user info
+            user_info = self.start_chat_api()
+            self.name = user_info["name"]
+            self.age = user_info["age"]
+            self.gender = user_info["gender"]
             save_user_info(self.user_id, self.name, self.age, self.gender)
 
         # Load chat log if it exists
         chat_log = get_chat_log(self.chat_id)
-        if chat_log:
+        if chat_log and isinstance(chat_log, list) and isinstance(chat_log[0], dict) and 'role' in chat_log[0]:
             self.history = chat_log
         else:
-            self.history.append({
-                "role": "client",
-                "message": f"{self.name}님, 안녕하세요. 어떤 문제가 있으신가요?"
-            })
+            self.history = [{"role": "client", "message": f"{self.name}님, 안녕하세요. 어떤 문제가 있으신가요?"}]
 
         # SubLLM analysis
         self.subllm_agent = SubLLMAgent()
@@ -120,8 +118,8 @@ class TherapySimulation:
             # 5. 채팅 로그 저장
             save_chat_log(self.user_id, self.chat_id, client_msg, counselor_msg)  # 채팅 로그를 MongoDB에 저장
             # 6. 종료 조건 체크
-            if "[/END]" in client_msg:
-                self.history[-1]["message"] = client_msg.replace("[/END]", "")
+            if "[/END]" in client_msg or client_msg.strip().lower() == "exit":
+                self.history[-1]["message"] = client_msg.replace("[/END]", "exit")
                 break
 
         # 7. 평가 수행
@@ -136,6 +134,27 @@ class TherapySimulation:
             "history": self.history,
             "evaluation": evaluation_result
         }
+
+    def start_chat_api(self):
+        # Call the /start_chat API to collect user information
+        api_url = "http://15.164.216.174:8000/start_chat"  # 실제 서버 IP를 넣어야 해
+        data = {
+            "user_id": self.user_id,
+            "chat_id": self.chat_id,
+            "first_message": "Hello",
+            "persona_type": self.persona_type,
+            "name": None,  # These will be filled in the API
+            "age": None,
+            "gender": None
+        }
+
+        response = requests.post(api_url, json=data)
+        
+        if response.status_code == 200:
+            user_info = response.json()
+            return user_info  # The response contains user data
+        else:
+            raise HTTPException(status_code=500, detail="Error retrieving user information.")
 
 def run_chat_with_args(output_file: str, persona_type: str, chat_id: str, user_id: str):
     sim = TherapySimulation(
