@@ -92,3 +92,5 @@ def get_user_info(user_id):
         return user_info  # 사용자 정보 반환
     else:
         return None
+    
+    

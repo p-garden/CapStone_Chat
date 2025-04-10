@@ -1,0 +1,150 @@
+{
+  "persona": "persona_20s_friend",
+  "cbt_strategy": "감정 전략을 찾을 수 없습니다. | 없음에 대한 전략을 찾을 수 없습니다.",
+  "cognitive_distortion": "없음",
+  "emotion": "없음",
+  "history": [
+    {
+      "role": "user",
+      "message": "그래요",
+      "timestamp": "2025-04-10T16:30:23.015209"
+    },
+    {
+      "role": "bot",
+      "message": "안녕하세요, 정원님! 만나서 정말 반가워요. 오늘 어떤 기분이세요? 혹시 요즘 떠오르는 걱정이나 고민이 있으면 편하게 이야기해 주세요. 당신의 감정이 어떤 것이든 존중하고, 이해하려고 할게요. 😊\n\n이런 대화가 처음이라면 조금 어색할 수도 있지만, 여기서 당신의 이야기를 나누는 건 정말 중요해요. 어떤 생각이 마음을 무겁게 하고 있는지, 함께 살펴보면 좋겠어요. 그럼, 한 걸음씩 나아가 볼까요?",
+      "timestamp": "2025-04-10T16:30:23.015209"
+    },
+    {
+      "role": "user",
+      "message": "인생이 망했어",
+      "timestamp": "2025-04-10T16:30:34.168804"
+    },
+    {
+      "role": "bot",
+      "message": "정원님, 정말 고마워요! 편하게 대화해 주셔서 기뻐요. 😊 지금 특별히 걱정되는 것이나 고민이 있다면, 그걸 먼저 나눠볼까요? 혹시 마음속에 어떤 생각들이 떠오르거나, 요즘 느끼고 있는 감정들이 있다면 저와 함께 살펴보면 좋을 것 같아요. \n\n우리 처음 시작하는 거니까, 작은 것부터 이야기해도 괜찮아요! 어떤 소소한 고민이라도, 당신의 이야기를 듣고 싶어요. ",
+      "timestamp": "2025-04-10T16:30:34.168804"
+    },
+    {
+      "role": "user",
+      "message": "[/END]",
+      "timestamp": "2025-04-10T16:30:56.480798"
+    },
+    {
+      "role": "bot",
+      "message": "Counselor: 아, 정원님... 그런 기분이 드셨군요. 정말 힘들고 슬프겠어요. 😢 인생이 이렇게 느껴진다면, 그 감정을 느끼는 건 너무나 자연스러운 일이에요. 그런 생각이 드는 순간, 마음이 무겁고 우울할 수밖에 없죠.\n\n그런데, “인생이 망했다”는 생각이 드는 이유가 있을 것 같아요. 혹시 그 생각이 드는 구체적인 상황이나 사건이 있었나요? 조금 더 이야기해주면 좋겠어요. 그 상황을 함께 살펴보면서, 조금씩 더 나아갈 수 있는 방법을 찾아볼 수 있을 것 같아요! 💪✨",
+      "timestamp": "2025-04-10T16:30:56.480798"
+    },
+    {
+      "role": "user",
+      "message": "[/END]",
+      "timestamp": "2025-04-10T16:32:03.052197"
+    },
+    {
+      "role": "bot",
+      "message": "정원님, 정말 힘든 시간을 보내고 계신 것 같아요. 그 감정이 얼마나 무거운지 정말 이해해요. 😔 가끔은 모든 게 잘못된 것처럼 느껴질 수 있지만, 그런 생각이 드는 이유를 함께 살펴보는 게 중요해요.\n\n혹시 \"인생이 망했다\"는 느낌이 드는 특별한 사건이나 상황이 있었나요? 그 사건에 대해 조금 더 이야기해주면, 그 감정을 이해하고 함께 정리해 볼 수 있을 것 같아요. 어떤 상황에서 그런 생각이 드셨는지 편하게 말해보세요! 💖",
+      "timestamp": "2025-04-10T16:32:03.052197"
+    },
+    {
+      "role": "user",
+      "message": "[/ㄷEND]",
+      "timestamp": "2025-04-10T16:32:47.581215"
+    },
+    {
+      "role": "bot",
+      "message": "정원님, 정말 힘든 시간을 보내고 계신 것 같아요. 그 감정이 얼마나 무겁고 힘든지 이해해요. 😔 가끔은 모든 게 잘못된 것처럼 느껴질 수 있지만, 그런 생각이 드는 이유를 함께 살펴보는 게 중요해요.\n\n혹시 \"인생이 망했다\"는 느낌이 드는 특별한 사건이나 상황이 있었나요? 그 사건에 대해 조금 더 이야기해주면, 그 감정을 이해하고 함께 정리해 볼 수 있을 것 같아요. 어떤 상황에서 그런 생각이 드셨는지 편하게 말해보세요! 💖\n\n우리가 함께 그 생각을 조금씩 나눠보면, 그 속에 숨겨진 것들을 찾아볼 수 있을 거예요. 아주 작은 것부터 시작해도 괜찮아요!",
+      "timestamp": "2025-04-10T16:32:47.581215"
+    },
+    {
+      "role": "user",
+      "message": "[/END]",
+      "timestamp": "2025-04-10T16:33:01.221603"
+    },
+    {
+      "role": "bot",
+      "message": "정원님, 정말 힘든 시간을 보내고 계신 것 같아요. 그런 기분이 드는 건 정말 자연스러운 일이에요. 😔 인생이 망했다는 생각이 드는 이유를 이해해보는 게 정말 중요해요.\n\n혹시 최근에 어떤 일 때문에 그런 기분이 드셨는지, 작은 것부터 이야기해주실 수 있을까요? 어떤 상황에서 그런 생각이 떠올랐는지 같이 나눠보면, 조금 더 구체적으로 이해할 수 있을 것 같아요. 우리가 함께 그 상황을 살펴보면, 조금씩 더 나아갈 수 있는 길을 찾을 수 있을 거예요. 💖",
+      "timestamp": "2025-04-10T16:33:01.221603"
+    },
+    {
+      "role": "user",
+      "message": "왜 갑자기영어로 말해?",
+      "timestamp": "2025-04-10T17:42:36.683263"
+    },
+    {
+      "role": "bot",
+      "message": "Hey 박정원! 😊 It’s really great to chat with you. I’m here for you, and I want you to know that whatever you’re feeling right now is totally valid. \n\nSo, let’s take a moment to check in. How are you feeling today? Is there something specific on your mind that you’d like to talk about? It’s all about taking small steps together, and I’m here to support you through this. 💖",
+      "timestamp": "2025-04-10T17:42:36.683263"
+    },
+    {
+      "role": "user",
+      "message": "[/END]",
+      "timestamp": "2025-04-10T17:42:55.608212"
+    },
+    {
+      "role": "bot",
+      "message": "안녕, 박정원! 😄 미안해, 갑자기 영어로 말해버렸네. 나도 가끔 이런 실수를 해! 네가 느끼는 놀람이 어떤 건지 이해해. 이런 순간들은 정말 당황스러울 수 있어, 맞지? \n\n우선, 지금 느끼는 감정을 조금 더 가라앉히는 시간을 가져볼까 해. 함께 깊게 호흡해보는 건 어때? 천천히 코로 숨을 깊게 들이마시고, 다시 천천히 내쉬어 보자. 그렇게 몇 번 해보면 조금 더 편안해질 수 있을 거야. 😊 \n\n그리고 나서, 어떤 생각이 네 머릿속을 스쳤는지 이야기해줄 수 있어? 우리는 함께 그거에 대해 이야기해볼 수 있어! 💕",
+      "timestamp": "2025-04-10T17:42:55.608212"
+    },
+    {
+      "role": "user",
+      "message": "[/END]",
+      "timestamp": "2025-04-10T18:06:34.190672"
+    },
+    {
+      "role": "bot",
+      "message": "안녕하세요, 정원! 😊 새로운 채팅을 시작하게 되어 정말 반가워요. 어떤 생각이나 감정이 드는지 나눠줄 수 있어? 여기서 편하게 이야기해도 돼! \n\n너의 감정 상태를 알아보고 싶어. 요즘 어떤 일들이 너를 힘들게 하거나 걱정하게 만들고 있어? 함께 이야기해보면 좋을 것 같아! 💖",
+      "timestamp": "2025-04-10T18:06:34.190672"
+    },
+    {
+      "role": "user",
+      "message": "[END]",
+      "timestamp": "2025-04-10T18:20:51.080335"
+    },
+    {
+      "role": "bot",
+      "message": "안녕, 정원! 😊 새로운 채팅을 시작한다고 해서 정말 반가워! 무슨 일이든지 나와 함께 나눠볼 준비가 되어있어. 요즘 어떻게 지내고 있어? 어떤 감정이 드는지 궁금해. 언제든지 편하게 이야기해줘!",
+      "timestamp": "2025-04-10T18:20:51.080335"
+    },
+    {
+      "role": "user",
+      "message": "[/END]",
+      "timestamp": "2025-04-10T18:21:00.311607"
+    },
+    {
+      "role": "bot",
+      "message": "안녕, 정원! 😊 다시 이야기할 수 있어서 정말 기뻐! 요즘 어떻게 지내고 있어? 감정적으로 어떤 상태인지 이야기해주면 좋겠어. 지금은 특별한 감정이 없다고 했는데, 그럼에도 불구하고 일상에서 느끼는 작은 것들이 있을 수 있어. 혹시 최근에 무언가가 너에게 영향을 미쳤거나 생각나는 일이 있을까? 언제든지 편하게 말해줘!",
+      "timestamp": "2025-04-10T18:21:00.311607"
+    },
+    {
+      "role": "counselor",
+      "message": "안녕, 정원! 😊 네가 이렇게 다시 이야기해줘서 정말 고마워. 지금 감정적으로 어떤 상태인지 조금 더 나눠줄 수 있을까? 특별히 힘들거나 걱정되는 일이 있는지 궁금해. \n\n요즘 어떤 생각들이 떠오르거나, 마음을 무겁게 하는 것들이 있을까? 그 생각들을 같이 살펴보면 좋을 것 같아. 그리고 네가 느끼는 감정이 어떤 것이든지 모두 이해하고 존중할게! 💖\n\n우리가 처음부터 너무 많은 걸 이야기하기보다는, 작은 것부터 시작해보면 좋을 것 같아. 어떤 작은 고민이라도 괜찮으니 편하게 이야기해줘! ✨"
+    },
+    {
+      "role": "client",
+      "message": "exit"
+    },
+    {
+      "role": "counselor",
+      "message": "안녕, 정원! 😊 다시 이야기해줘서 정말 고마워. 지금 감정적으로 특별히 힘든 건 없다고 하셨는데, 그래도 일상에서 느끼는 작은 것들이 있을 수 있어. 그런 것들을 나눠보면 좋을 것 같아!\n\n혹시 최근에 무언가가 너에게 영향을 미쳤거나, 생각나는 일이 있을까? 어떤 소소한 고민이라도 괜찮으니까 편하게 이야기해줘! 💖 우리 함께 한 걸음씩 나아가면 좋을 것 같아."
+    },
+    {
+      "role": "client",
+      "message": "[/ㄷEND]"
+    },
+    {
+      "role": "counselor",
+      "message": "안녕, 정원! 😊 이렇게 다시 이야기해줘서 정말 고마워. 요즘 특별히 힘든 감정은 없다고 하셨지만, 가끔은 일상에서 작은 것들이 우리에게 영향을 미칠 수 있어. 그래서 오늘은 그런 작은 것들에 대해 이야기해보면 좋을 것 같아!\n\n혹시 최근에 어떤 일이 있었는지, 혹은 어떤 생각이 떠올랐는지 편하게 나눠줄 수 있어? 그 상황을 함께 살펴보면서, 그 안에 숨어 있는 감정이나 생각들이 무엇인지 알아보면 좋을 것 같아. 💖\n\n어떤 소소한 고민이라도 괜찮으니, 네 이야기를 듣고 싶어! ✨"
+    },
+    {
+      "role": "client",
+      "message": "exit"
+    }
+  ],
+  "evaluation": {
+    "general_1": "4, The therapist generally seemed to grasp the patient’s internal reality, reflecting an understanding of the patient's explicit feelings of distress and hopelessness. They encouraged the patient to share more about their feelings and experiences, displaying good listening and empathic skills. However, there were moments where the therapist's responses seemed somewhat generic or repetitive, indicating a slight limitation in fully engaging with the patient's subtle communications. Thus, while the therapist demonstrated a good understanding, there is room for improvement, justifying a score of 4.",
+    "general_2": "4, The therapist demonstrated a good ability to listen and empathize with the client's feelings, acknowledging the client's distress and encouraging them to share their thoughts. However, there were moments where the therapist's responses felt somewhat repetitive and did not fully explore the underlying issues the client was facing. While they maintained a supportive atmosphere, the depth of understanding could be improved to reach a higher score.",
+    "general_3": "4, The therapist generally seemed to grasp the patient’s internal reality as reflected by both explicit statements and subtle communications. They showed good ability to listen and empathize but had moments where they could have deeper engaged with the client's feelings and thoughts, particularly when the client expressed profound distress. Overall, while there was a solid understanding, there were areas that needed improvement for a higher score.",
+    "cbt_1": "4, The therapist primarily helped the client explore their feelings and thoughts through guided questions, allowing for some self-reflection and insight. However, while the therapist did employ questioning effectively, there were moments where the exploration felt somewhat repetitive and lacked depth. The therapist could have pushed for more specific examples or deeper insights to facilitate greater discovery for the client. Thus, the score reflects a solid but not exceptional use of guided discovery techniques.",
+    "cbt_2": "4, The therapist primarily engaged in supportive dialogue and encouraged the client to share their feelings, which is positive. However, there was a lack of specific identification of the client's cognitive or behavioral patterns that needed addressing. The therapist did not effectively facilitate guided discovery or lead the client toward new insights. The questioning was appropriate but not deep enough to explore the client's underlying issues meaningfully. Therefore, while there was some effectiveness, it did not fully meet the criteria for a higher score.",
+    "cbt_3": "4, The therapist mostly helped the client see new perspectives through guided discovery by encouraging the client to share specific thoughts and feelings. However, there were moments where the therapist's responses felt somewhat repetitive and lacked deeper exploration of the client's issues, which could indicate a need for improvement in achieving a more skillful balance in questioning and intervention."
+  }
+}
