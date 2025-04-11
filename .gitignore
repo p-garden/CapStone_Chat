@@ -9,8 +9,4 @@ logs/
 results/
 *.pem
 outputs/
-<<<<<<< HEAD
-
-=======
 .env
->>>>>>> 5816b79 (AWS위한 설정)

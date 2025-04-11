@@ -1,10 +1,6 @@
 """
 실행 코드
-<<<<<<< HEAD
 python3 chat.py --output_file results/result1.json --persona_type persona_20s_friend --chat_id PGchat1 --user_id PG1
-=======
-python3 chat.py --output_file results/result1.json --persona_type persona_20s_friend --chat_id PG123 --user_id userPG
->>>>>>> 1c98587 (FAST API및 컨테이너)
 """
 
 import json
@@ -139,7 +135,6 @@ class TherapySimulation:
             "evaluation": evaluation_result
         }
 
-<<<<<<< HEAD
     def start_chat_api(self):
         # Call the /start_chat API to collect user information
         api_url = "http://15.164.216.174:8000/start_chat"  # 실제 서버 IP를 넣어야 해
@@ -161,8 +156,7 @@ class TherapySimulation:
         else:
             raise HTTPException(status_code=500, detail="Error retrieving user information.")
 
-=======
->>>>>>> 1c98587 (FAST API및 컨테이너)
+
 def run_chat_with_args(output_file: str, persona_type: str, chat_id: str, user_id: str):
     sim = TherapySimulation(
         persona_type=persona_type,
