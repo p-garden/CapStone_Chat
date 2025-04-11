@@ -1,8 +1,17 @@
 """1
- ssh -i "PG.pem" ubuntu@15.164.26.174
+ ssh -i "PG.pem" ubuntu@3.39.231.190
 cd ~/CapStone 
 source venv/bin/activate
 uvicorn app:app --host 0.0.0.0 --port 8000
+http://0.0.0.0:8000/docs
+
+{
+  "user_id": "userPG",
+  "chat_id": "PG123",
+  "first_message": "오랜만이야",
+  "persona_type": "persona_20s_friend"
+}
+	
 """
 import json
 import uuid

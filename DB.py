@@ -1,9 +1,16 @@
 from pymongo import MongoClient
 from datetime import datetime
+import os
+from dotenv import load_dotenv
 
-# MongoDB 연결 설정
-client = MongoClient("mongodb+srv://j2982477:EZ6t7LEsGEYmCiJK@mindai.zgcb4ae.mongodb.net/?retryWrites=true&w=majority&appName=mindAI"
-"Current Mongosh Log ID: 67ed3148e753153a041aecb5")
+# .env 파일을 로드
+load_dotenv()
+
+# 환경 변수에서 MongoDB URI를 가져오기
+mongo_uri = os.getenv("MONGO_URI")
+
+# MongoDB 클라이언트 연결
+client = MongoClient(mongo_uri)
 db = client['mindAI']  # 'mindAI' 데이터베이스 사용
 chat_collection = db['chat_logs']  # 'chat_logs' 컬렉션 사용
 user_collection = db['users']  # 사용자 정보 저장을 위한 컬렉션
