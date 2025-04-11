@@ -1,7 +1,6 @@
 """
 실행 코드
 python3 chat.py --output_file results/result1.json --persona_type persona_5살_민지원 --chat_id PG123 --user_id userPG
-
 """
 
 import json
