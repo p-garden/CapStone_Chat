@@ -53,22 +53,27 @@ class CounselorAgent:
             "reply": ""
         }
 
-        # 상담사 응답 추출
-        reply_match = re.search(r"상담사\s*응답:\s*(.*?)(?:\n\[감정\]|$)", text, re.DOTALL)
+        # 1. 상담사 응답 추출 (이전보다 더 유연하게)
+        reply_match = re.search(r"상담사\s*응답[:：]?\s*(.*?)(?=\n\s*\[감정\]|\n\[감정\]|\Z)", text, re.DOTALL)
         if reply_match:
             result["reply"] = reply_match.group(1).strip()
 
-        # 감정, 인지 왜곡, 전략 줄 파싱
-        meta_line_match = re.search(r"\[감정\](.*?)\|\s*\[인지 왜곡\](.*?)\|\s*\[전략\](.*)", text)
-        if meta_line_match:
-            result["emotion"] = meta_line_match.group(1).strip()
-            result["distortion"] = meta_line_match.group(2).strip()
-            result["cbt_strategy"] = meta_line_match.group(3).strip()
+        # 2. 감정/인지/전략 메타데이터 추출
+        meta_matches = re.findall(r"\[감정\](.*?)\|\s*\[인지 왜곡\](.*?)\|\s*\[전략\](.*)", text)
+        if meta_matches:
+            # 가장 마지막에 등장한 메타 정보 사용
+            last_meta = meta_matches[-1]
+            result["emotion"] = last_meta[0].strip()
+            result["distortion"] = last_meta[1].strip()
+            result["cbt_strategy"] = last_meta[2].strip()
 
+        # 3. fallback: 상담사 응답이 비었을 경우 텍스트 전체 사용
         if not result["reply"]:
-            result["reply"] = "[⚠️ 상담사 응답을 생성하지 못했습니다.]"
+            fallback = text.strip().split("\n")[0]
+            if len(fallback) > 10:
+                result["reply"] = fallback
+            else:
+                result["reply"] = "[⚠️ 상담사 응답을 생성하지 못했습니다.]"
 
         print("[🔍 LLM 응답 결과 전체]:\n", text)
-
         return result
-
