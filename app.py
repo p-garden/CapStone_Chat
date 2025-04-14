@@ -12,6 +12,11 @@ http://0.0.0.0:8000/docs
     "chat_id": "PG123",
     "persona_type": "persona_8살_민지원"
     }
+<<<<<<< HEAD
+=======
+
+	
+>>>>>>> e98a08b (AWS위한 설정)
 """
 import json
 import uuid
