@@ -83,7 +83,7 @@ async def start_chat_endpoint(request: ChatRequest):
     with open(output_file, "r", encoding="utf-8") as f:
         result = json.load(f)
 
-    return {
+    return {    
         "bot_response": result["history"][-1]["message"],
         "history": history  # 기존 채팅 기록 반환
     }
