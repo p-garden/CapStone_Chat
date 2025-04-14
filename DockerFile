@@ -19,3 +19,4 @@ EXPOSE 8000
 
 # 6. 앱 실행 (여기서 app:app 은 app.py 내부의 FastAPI 인스턴스를 의미)
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+
