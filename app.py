@@ -2,6 +2,7 @@
 """1
  ssh -i "PG.pem" ubuntu@3.39.231.190
 cd ~/CapStone 
+
 source venv/bin/activate
 uvicorn app:app --host 0.0.0.0 --port 8000
 http://0.0.0.0:8000/docs
@@ -60,7 +61,19 @@ async def start_chat_endpoint(request: ChatRequest):
         history = chat_log
     else:
         history = [{"role": "client", "message": f"{name}님, 안녕하세요. 어떤 문제가 있으신가요?"}]
-    
+
+    # 채팅 시작
+    output_file = f"outputs/{uuid.uuid4().hex}.json"
+    run_chat_with_args(output_file, request.persona_type, request.chat_id, request.user_id)
+
+    with open(output_file, "r", encoding="utf-8") as f:
+        result = json.load(f)
+
+    return {
+        "user_message": request.first_message, 
+        "bot_response": result["history"][-1]["message"],
+        "history": history  # 기존 채팅 기록 반환
+    }
 
 
 @app.get("/get_chat_log/{chat_id}")
