@@ -12,7 +12,7 @@ http://0.0.0.0:8000/docs
     "chat_id": "PG123",
     "first_message": "오랜만이야",
     "persona_type": "persona_8살_민지원"}
-	
+
 """
 import json
 import uuid
