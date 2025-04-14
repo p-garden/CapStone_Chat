@@ -6,12 +6,11 @@ source venv/bin/activate
 uvicorn app:app --host 0.0.0.0 --port 8000
 http://0.0.0.0:8000/docs
 
-{
-  "user_id": "userPG",
-  "chat_id": "PG123",
-  "first_message": "오랜만이야",
-  "persona_type": "persona_20s_friend"
-}
+   {
+    "user_id": "userPG",
+    "chat_id": "PG123",
+    "first_message": "오랜만이야",
+    "persona_type": "persona_8살_민지원"}
 	
 """
 import json

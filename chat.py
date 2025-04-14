@@ -14,17 +14,11 @@ from cbt.cbt_mappings import emotion_strategies, cognitive_distortion_strategies
 from DB import get_chat_log, save_chat_log, save_user_info, get_user_info  # DB.py에서 import
 from fastapi import FastAPI, HTTPException
 import requests
+from datetime import datetime
 
 # API 키 설정
 set_openai_api_key()
-#from pymongo import MongoClient
 
-# 연결 문자열 사용
-#client = MongoClient("mongodb+srv://j2982477:EZ6t7LEsGEYmCiJK"
-#"@mindAI.zgcb4ae.mongodb.net/?retryWrites=true&w=majority&appName=mindAI")
-
-# 'mindAI' 데이터베이스에 연결
-#db = client['mindAI']
 # TherapySimulation 클래스에서 사용자 정보 확인
 class TherapySimulation:
     def __init__(self, persona_type: str, chat_id: str, user_id: str, max_turns: int = 20):
@@ -86,31 +80,29 @@ class TherapySimulation:
         for turn in range(self.max_turns):
             print(f"--- Turn {turn + 1} ---")
 
-            # 1. 상담자 응답 생성
-            counselor_msg = self.counselor_agent.generate_response(self.history)
-            self.history.append({"role": "counselor", "message": counselor_msg})
-            print("Counselor:", counselor_msg)
-
             # 직접 내담자 역할을 할 수 있는 부분 (현재는 사용자가 직접 입력)
             client_msg = input(f"{self.name}: ")
             self.history.append({"role": "client", "message": client_msg})
             print(f"{self.name}: {client_msg}")
+                        # 1. 상담자 응답 생성
+            counselor_msg = self.counselor_agent.generate_response(self.history,client_msg)
+            self.history.append({"role": "counselor", "message": counselor_msg})
+            print("Counselor:", counselor_msg)
 
             # 3. SubLLM 분석 (감정 및 인지 왜곡 탐지)
             analysis_result = self.subllm_agent.analyze(client_msg)
             emotion = analysis_result.get("감정", "")
             distortion = analysis_result.get("인지왜곡", "")
-            total_strategy = analysis_result.get("총합_CBT전략", "")  # 여기서 total_strategy 사용
+            #total_strategy = analysis_result.get("총합_CBT전략", "")  # 여기서 total_strategy 사용
             
             print(f"Emotion detected: {emotion}")
             print(f"Cognitive Distortion detected: {distortion}")
-            print(f"CBT Strategy: {total_strategy}")
             print()
 
             # 4. 최신 분석 결과로 상담자 에이전트 재정의
             self.counselor_agent = CounselorAgent(
                 client_info=f"{self.name}, {self.age}세, {self.gender}성",
-                total_strategy=total_strategy,
+                total_strategy="",
                 persona_type=self.persona_type,
                 emotion=emotion,
                 distortion=distortion
@@ -128,9 +120,8 @@ class TherapySimulation:
         # 7. 결과 반환
         return {
             "persona": self.persona_type,
-            "cbt_strategy": total_strategy,
-            "cognitive_distortion": distortion,
-            "emotion": emotion,
+            "cognitive_distortion": self.counselor_agent.distortion,
+            "emotion": self.counselor_agent.emotion,
             "history": self.history,
             "evaluation": evaluation_result
         }
@@ -164,6 +155,9 @@ def run_chat_with_args(output_file: str, persona_type: str, chat_id: str, user_i
         user_id=user_id, 
     )    
     result = sim.run()
+    if args.output_file is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        args.output_file = f"results/result_{timestamp}.json"
 
     Path(output_file).parent.mkdir(parents=True, exist_ok=True)
     with open(output_file, "w", encoding="utf-8") as f:
@@ -172,11 +166,14 @@ def run_chat_with_args(output_file: str, persona_type: str, chat_id: str, user_i
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output_file", required=True)
+    parser.add_argument("--output_file", default=None)
     parser.add_argument("--persona_type", required=True)
     parser.add_argument("--chat_id", required=True)  # chat_id 추가
     parser.add_argument("--user_id", required=True)  # 사용자 이름
-
     args = parser.parse_args()
+    if args.output_file is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        args.output_file = f"results/result_{timestamp}.json"
+
 
     run_chat_with_args(args.output_file, args.persona_type, args.chat_id, args.user_id)

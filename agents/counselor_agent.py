@@ -27,7 +27,7 @@ class CounselorAgent:
     # 감정과 인지 왜곡에 맞는 전략 결합
         return f"{emotion_strategy} {distortion_strategy}"
     
-    def generate_response(self, history):
+    def generate_response(self, history,latest_client_message):
         # history를 문자열로 변환
         formatted_history = "\n".join([f"{msg['role'].capitalize()}: {msg['message']}" for msg in history])
 
@@ -37,7 +37,8 @@ class CounselorAgent:
             total_strategy=self.total_strategy,
             persona_prompt=self.persona_prompt,
             emotion=self.emotion,
-            distortion=self.distortion
+            distortion=self.distortion,
+            latest_client_message=latest_client_message
         )
 
         response = self.llm.invoke(filled_prompt)
