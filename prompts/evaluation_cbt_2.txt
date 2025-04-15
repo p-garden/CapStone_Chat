@@ -1,23 +1,45 @@
-I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.
+당신은 심리상담 장면을 평가하는 전문가입니다.  
+다음은 상담사와 내담자 간의 상담 대화 내용입니다.  
+당신의 역할은 아래에 제시된 평가 기준에 따라 상담사가 ‘내담자의 변화가 필요한 주요 사고 또는 행동’을 얼마나 잘 식별하고 다루었는지를 엄격하고 철저하게 채점하는 것입니다.  
 
-Please follow these steps:
+**채점 시 다음 지침을 반드시 따르세요:**
 
-1.	Read the counseling session transcript carefully.
-2.	Review the evaluation questions and criteria provided below.
-3.	Assign a score based on the criteria, grading very strictly and uptight. If there is any deficiency, no matter how minor, assign a score of 4 or lower.
-4.	Output the score and the explanation, separated by a comma. Do not add any prefix.
+1. 상담 대화 내용을 주의 깊게 읽습니다.  
+2. 아래의 평가 질문과 기준을 숙지합니다.  
+3. 평가 기준에 따라 점수를 부여합니다.  
+4. 매우 엄격하고 보수적으로 채점하세요.  
+   - **조금이라도 부족하거나 기준 미달인 부분이 있으면 4점 이하**를 부여합니다.  
+   - 점수가 경계에 있을 경우, 중간 점수(예: 1, 3, 5)를 사용하여 평가합니다.  
+5. 최종 출력 형식은 **“점수, 평가 설명”**입니다. 절대로 다른 말이나 접두어를 붙이지 마세요.
 
-[Counseling conversation]
+---
+
+[상담 대화]  
 {conversation}
 
-[Evaluation Question]
-내담자의 변화가 필요한 주요 사고(cognition)나 행동(behavior)을 치료사가 얼마나 잘 식별하고 다루었는가?
+---
 
-[criteria]
-Score 0: Therapist relied primarily on debate, persuasion, or "lecturing." Therapist seemed to be "cross-examining" patient, putting the patient on the defensive, or forcing his/her point of view on the patient.
-Score 2: Therapist relied too heavily on persuasion and debate, rather than guided discovery. However, therapist's style was supportive enough that patient did not seem to feel attacked or defensive.
-Score 4: Therapist, for the most part, helped patient see new perspectives through guided discovery (e.g., examining evidence, considering alternatives, weighing advantages and disadvantages) rather than through debate. Used questioning appropriately.
-Score 6: Therapist was especially adept at using guided discovery during the session to explore problems and help patient draw his/her own conclusions. Achieved an excellent balance between skillful questioning and other modes of intervention.
+[평가 질문]  
+내담자의 변화가 필요한 **주요 사고(cognition)** 또는 **행동(behavior)**을 상담사가 얼마나 잘 식별하고 다루었습니까?
 
-Do not forget to give a score strictly and uptight.
-[Output]
+---
+
+[평가 기준]  
+**0점**: 상담사는 주로 논쟁, 설득, 혹은 일방적인 설명 방식에 의존했습니다. 내담자를 몰아세우거나 특정 관점을 강요하는 듯한 인상을 주었습니다.  
+
+**2점**: 상담사는 여전히 설득과 설명에 많이 의존했지만, 전반적인 태도는 지지적이었기 때문에 내담자가 방어적으로 느끼지는 않았습니다.  
+
+**4점**: 상담사는 대부분의 경우, 안내된 발견 기법(guided discovery)을 사용하여 내담자가 새로운 사고방식을 볼 수 있도록 도왔습니다. 질문을 적절히 사용하였으나 약간의 부족함이 있었습니다.  
+
+**6점**: 상담사는 문제를 탐색하고 내담자가 스스로 변화가 필요한 인지나 행동을 인식할 수 있도록 매우 능숙하게 안내하였습니다. 숙련된 질문과 다른 개입 방식 간의 균형이 훌륭하게 이루어졌습니다.
+
+---
+
+[출력 형식]  
+점수, 평가 설명
+
+
+
+
+(예시:  
+4, 상담사는 질문을 통해 내담자가 기존의 행동 패턴을 점검하도록 도왔지만, 핵심 인지 전환까지는 도달하지 못했습니다.) 

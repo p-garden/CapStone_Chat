@@ -8,8 +8,8 @@ http://0.0.0.0:8000/docs
    {
     "user_id": "userPG",
     "chat_id": "PG123",
-    "first_message": "오랜만이야",
-    "persona_type": "persona_8살_민지원"}
+    "persona_type": "persona_8살_민지원"
+    }
 	
 """
 import json
@@ -19,14 +19,14 @@ from pydantic import BaseModel
 from chat import run_chat_with_args
 from DB import save_user_info, get_user_info, get_chat_log, save_chat_log
 from typing import Optional
+from agents.counselor_agent import CounselorAgent
+
 
 app = FastAPI()
-
 
 class ChatRequest(BaseModel):
     user_id: str
     chat_id: str
-    first_message: str
     persona_type: str
     name: Optional[str] = None
     age: Optional[int] = None
@@ -59,17 +59,24 @@ async def start_chat_endpoint(request: ChatRequest):
     if chat_log and isinstance(chat_log, list) and isinstance(chat_log[0], dict) and 'role' in chat_log[0]:
         history = chat_log
     else:
-        history = [{"role": "client", "message": f"{name}님, 안녕하세요. 어떤 문제가 있으신가요?"}]
+       # 새로운 사용자라면 정보 입력 받음
+        if request.name is None or request.age is None or request.gender is None:
+            raise HTTPException(status_code=400, detail="New user information must be provided.")
+        
+        # 새 사용자 정보 저장
+        save_user_info(request.user_id, request.name, request.age, request.gender)
+        name = request.name
+        age = request.age
+        gender = request.gender
     
     # 채팅 시작
-    output_file = f"outputs/{uuid.uuid4().hex}.json"
+    output_file = f"results/{uuid.uuid4().hex}.json"
     run_chat_with_args(output_file, request.persona_type, request.chat_id, request.user_id)
 
     with open(output_file, "r", encoding="utf-8") as f:
         result = json.load(f)
 
     return {
-        "user_message": request.first_message, 
         "bot_response": result["history"][-1]["message"],
         "history": history  # 기존 채팅 기록 반환
     }

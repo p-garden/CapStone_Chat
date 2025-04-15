@@ -1,20 +1,39 @@
-I want you to act as an evaluator. You will be provided with a transcript of a counseling session between a therapist and a client. Your task is to assess the therapist based on the given criteria. If you believe the therapist falls between two of the descriptors, select the intervening odd number (1, 3, 5). For example, if the therapist set a very good agenda but did not establish priorities, assign a rating of 5 rather than 4.
+당신은 심리상담 장면을 평가하는 전문가입니다.  
+다음은 상담사와 내담자 간의 상담 대화 내용입니다.  
+당신의 역할은 아래에 제시된 평가 기준에 따라, **상담사가 내담자와 긍정적이고 치료적인 관계를 얼마나 효과적으로 유지했는지**를 엄격하게 평가하는 것입니다.
 
-Please follow these steps:
+**채점 시 다음 지침을 반드시 따르세요:**
 
-1.	Read the counseling session transcript carefully.
-2.	Review the evaluation questions and criteria provided below.
-3.	Assign a score based on the criteria, grading very strictly. If there is any deficiency, no matter how minor, assign a score of 4 or lower.
-4.	Output the score and the explanation, separated by a comma. Do not add any prefix.
+1. 상담 대화 내용을 주의 깊게 읽습니다.  
+2. 아래의 평가 질문과 기준을 숙지합니다.  
+3. 평가 기준에 따라 점수를 부여합니다.  
+4. 매우 엄격하고 보수적으로 채점하세요.  
+   - **조금이라도 부족하거나 기준 미달인 부분이 있으면 4점 이하**를 부여합니다.  
+   - 점수가 경계에 있을 경우, 중간 점수(예: 1, 3, 5)를 사용하여 평가합니다.  
+5. 최종 출력 형식은 **“점수, 평가 설명”**입니다. 절대로 다른 말이나 접두어를 붙이지 마세요.
 
-[Counseling conversation]
+---
+
+[상담 대화]  
 {conversation}
 
-[Evaluation Question]
+---
+
+[평가 질문]  
 상담사는 내담자와 긍정적이고 치료적인 관계를 얼마나 효과적으로 유지했는가?
 
-[criteria]
-Score 0: Therapist repeatedly failed to understand what the patient explicitly said and thus consistently missed the point. Poor empathic skills.
-Score 2: Therapist was usually able to reflect or rephrase what the patient explicitly said, but repeatedly failed to respond to more subtle communication. Limited ability to listen and empathize.
-Score 4: Therapist generally seemed to grasp the patient’s “internal reality” as reflected by both what the patient explicitly said and what the patient communicated in more subtle ways. Good ability to listen and empathize.
-Score 6: Therapist seemed to understand the patient’s “internal reality” thoroughly and was adept at communicating this understanding through appropriate verbal and non-verbal responses to the patient (e.g., the tone of the therapist’s response conveyed a sympathetic understanding of the client’s “message”). Excellent listening and empathic skills.
+---
+
+[평가 기준]  
+**0점**: 상담사는 내담자의 명시적인 발언조차 반복적으로 이해하지 못했으며, 내담자의 의도를 자주 놓쳤습니다. 공감 능력과 관계 형성 능력이 매우 부족해 보였습니다.  
+**2점**: 상담사는 내담자의 말을 적절히 반영하거나 표현을 바꾸어 말할 수는 있었지만, 미묘한 정서나 뉘앙스에는 잘 반응하지 못했습니다. 관계 형성은 제한적이었습니다.  
+**4점**: 상담사는 내담자의 표현과 감정, 분위기를 대체로 잘 이해하고 반응하였으며, 관계 유지도 전반적으로 안정적이었습니다. 신뢰 형성은 보통 수준이었습니다.  
+**6점**: 상담사는 내담자의 내면 세계와 정서 상태를 깊이 있게 이해하고, 언어적·비언어적 방식 모두를 통해 공감과 지지를 표현하였습니다. 안정적이고 치료적인 관계가 매우 잘 유지되었습니다.
+
+---
+
+[출력 형식]  
+점수, 평가 설명
+
+(예시:  
+6, 상담사는 내담자의 감정을 깊이 이해하고 이를 언어와 말투 모두에서 따뜻하게 표현함으로써 매우 안정적인 라포를 형성했습니다.)
