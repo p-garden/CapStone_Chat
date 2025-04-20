@@ -48,18 +48,18 @@ class TherapySimulation:
         if chat_log and isinstance(chat_log, list) and isinstance(chat_log[0], dict) and 'role' in chat_log[0]:
             self.history = chat_log
         else:
+            self.counselor_agent = CounselorAgent(
+                client_info=f"{self.name}, {self.age}세, {self.gender}",
+                persona_type=self.persona_type
+            )
             welcome_input = "상담을 시작하는 간단한 인사말과 상담사의 페르소나를 소개해 주세요. 이름과 나이를 밝혀주세요"
-            counselor_result = self.counselor_agent.generate_response([], welcome_input)
-            self.history = [{"role": "counselor", "message": counselor_result}]
+            result = self.counselor_agent.generate_response([], welcome_input)
+            welcome_message = result.get("reply", "상담사가 인사말을 준비 중이에요.")
+            self.history = [{"role": "counselor", "message": welcome_message}]
 
         # SubLLM analysis
         self.subllm_agent = SubLLMAgent()
         self.evaluator_agent = EvaluatorAgent()
-         # 상담자 에이전트와 평가자 에이전트 초기화
-        self.counselor_agent = CounselorAgent(
-            client_info=f"{self.name}, {self.age}세, {self.gender}",
-            persona_type=self.persona_type
-        )
 
     def run(self):
         for turn in range(self.max_turns):
@@ -70,40 +70,7 @@ class TherapySimulation:
             if "[/END]" in client_msg or client_msg.strip().lower() == "exit":
                 self.history[-1]["message"] = client_msg.replace("[/END]", "exit")
                 break
-            """
-            self.history.append({"role": "client", "message": client_msg})
-            print(f"{self.name}: {client_msg}")
-                        # 1. 상담자 응답 생성
-            counselor_msg = self.counselor_agent.generate_response(self.history,client_msg)
-            self.history.append({"role": "counselor", "message": counselor_msg})
-            print("Counselor:", counselor_msg)
-
-            # 3. SubLLM 분석 (감정 및 인지 왜곡 탐지)
-            analysis_result = self.subllm_agent.analyze(client_msg)
-            emotion = analysis_result.get("감정", "")
-            distortion = analysis_result.get("인지왜곡", "")
-            #total_strategy = analysis_result.get("총합_CBT전략", "")  # 여기서 total_strategy 사용
-            
-            print(f"Emotion detected: {emotion}")
-            print(f"Cognitive Distortion detected: {distortion}")
-            print()
-
-            # 4. 최신 분석 결과로 상담자 에이전트 재정의
-            self.counselor_agent = CounselorAgent(
-                client_info=f"{self.name}, {self.age}세, {self.gender}성",
-                total_strategy="",
-                persona_type=self.persona_type,
-                emotion=emotion,
-                distortion=distortion
-            )
-            # 5. 채팅 로그 저장
-            save_chat_log(self.user_id, self.chat_id, client_msg, counselor_msg)  # 채팅 로그를 MongoDB에 저장
-            # 6. 종료 조건 체크
-            if "[/END]" in client_msg or client_msg.strip().lower() == "exit":
-                self.history[-1]["message"] = client_msg.replace("[/END]", "exit")
-                break
-
-        """
+           
         # 사용자 메시지 + 타임스탬프 포함
             self.history.append({
                 "role": "client",
@@ -148,7 +115,7 @@ class TherapySimulation:
 
     def start_chat_api(self):
         # Call the /start_chat API to collect user information
-        api_url = "http://3.39.231.190:8000/start_chat"  # 실제 서버 IP를 넣어야 해
+        api_url = "http://13.125.242.109:8000/start_chat"  # 실제 서버 IP를 넣어야 해
         data = {
             "user_id": self.user_id,
             "chat_id": self.chat_id,
@@ -166,7 +133,6 @@ class TherapySimulation:
         else:
             raise HTTPException(status_code=500, detail="Error retrieving user information.")
 
-
 def run_chat_with_args(output_file: str | None, persona_type: str, chat_id: str, user_id: str):
     if output_file is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -178,7 +144,6 @@ def run_chat_with_args(output_file: str | None, persona_type: str, chat_id: str,
         user_id=user_id, 
     )    
     result = sim.run()
-
 
     Path(output_file).parent.mkdir(parents=True, exist_ok=True)
     with open(output_file, "w", encoding="utf-8") as f:
