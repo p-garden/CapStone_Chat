@@ -7,7 +7,8 @@ import json
 from pathlib import Path
 from agents.counselor_agent import CounselorAgent
 from agents.evaluator_agent import EvaluatorAgent
-from agents.sub_llm import SubLLMAgent
+from config import load_config
+from agents.subllm_agent import SubLLMAgent
 from config import get_config, set_openai_api_key
 from cbt.cbt_mappings import emotion_strategies, cognitive_distortion_strategies
 from DB import get_chat_log, save_chat_log, save_user_info, get_user_info  # DB.py에서 import
@@ -85,37 +86,27 @@ class TherapySimulation:
 
             # 상담사 응답 생성
             result = self.counselor_agent.generate_response(self.history, client_msg)
-            counselor_msg = result.get("reply", "[⚠️ 상담사 응답을 생성하지 못했습니다.]")
-            emotion = result.get("emotion", "감지되지 않음")
-            distortion = result.get("distortion", "감지되지 않음")
-            strategy = result.get("cbt_strategy", "전략 없음")
+            reply = result["reply"]
+            print("Counselor:", reply)
 
-            # 출력
-            #print("Counselor:", counselor_msg)
-            #print(f"[감정] {emotion} | [인지 왜곡] {distortion} | [전략] {strategy}\n")
 
             # 상담사 응답도 타임스탬프 포함
             self.history.append({
                 "role": "counselor",
-                "message": counselor_msg,
+                "message": reply,
                 "timestamp": datetime.now().isoformat()
             })
 
             # 저장
-            save_chat_log(self.user_id, self.chat_id, client_msg, counselor_msg)
+            save_chat_log(self.user_id, self.chat_id, client_msg, reply)
+        evaluation = self.evaluator_agent.evaluate_all(self.history)
+        summary = self.evaluator_agent.generate_feedback_summary(self.history, evaluation)
 
-        # 통합 평가
-        full_conversation = "\n".join([
-            f"{msg['role'].capitalize()}: {msg['message']}" for msg in self.history
-        ])
-        # 7. 평가 수행
-        evaluation_result = self.evaluator_agent.evaluate_all(self.history)
-        feedback_summary = self.evaluator_agent.generate_feedback_summary(self.history, evaluation_result)
         # 7. 결과 반환
         return {
             "persona": self.persona_type,
             "history": self.history,
-            "evaluation": evaluation_result
+            "evaluation": evaluation
         }
 
     def start_chat_api(self):

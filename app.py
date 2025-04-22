@@ -8,11 +8,11 @@ http://13.125.242.109:8000/docs
 {
     "user_id": "userPG",
     "chat_id": "PG123",
-    "persona_type": "persona_8살_민지원"
+    "persona_type": "8살_민지원"
 
-    "user_id": "new12345",
-    "chat_id": "new12345",
-    "persona_type": "persona_8살_민지원",
+    "user_id": "new123456",
+    "chat_id": "new123456",
+    "persona_type": "8살_민지원",
     "name": "새로운",
     "age": 1,
     "gender": "남"
