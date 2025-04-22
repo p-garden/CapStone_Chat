@@ -47,6 +47,11 @@ class TherapySimulation:
         chat_log = get_chat_log(self.chat_id)
         if chat_log and isinstance(chat_log, list) and isinstance(chat_log[0], dict) and 'role' in chat_log[0]:
             self.history = chat_log
+            if not hasattr(self, 'counselor_agent'):
+                self.counselor_agent = CounselorAgent(
+                    client_info=f"{self.name}, {self.age}세, {self.gender}",
+                    persona_type=self.persona_type
+                )
         else:
             self.counselor_agent = CounselorAgent(
                 client_info=f"{self.name}, {self.age}세, {self.gender}",
