@@ -5,11 +5,15 @@ from agents.evaluator_agent import EvaluatorAgent
 from config import set_openai_api_key
 from DB import get_chat_log, save_chat_log, save_user_info, get_user_info
 from datetime import datetime
+from config import load_config
 from pymongo import MongoClient
+from fastapi import HTTPException
+import requests
 
 # ✅ API 및 DB 초기화
 set_openai_api_key()
-client = MongoClient("mongodb+srv://j2982477:EZ6t7LEsGEYmCiJK@mindai.zgcb4ae.mongodb.net/?retryWrites=true&w=majority&appName=mindAI")
+config = load_config()
+client = MongoClient(config["mongo"]["uri"])
 db = client['mindAI']
 
 class TherapySimulation:
@@ -20,15 +24,12 @@ class TherapySimulation:
         self.max_turns = max_turns
         self.history = []
 
-        # 사용자 정보 로딩
+        # 사용자 정보 로딩 또는 API 요청 제거 (FastAPI에서는 별도로 처리)
         user_info = get_user_info(self.user_id)
         if user_info:
             self.name, self.age, self.gender = user_info["name"], user_info["age"], user_info["gender"]
         else:
-            self.name = input("이름: ")
-            self.age = int(input("나이: "))
-            self.gender = input("성별: ")
-            save_user_info(self.user_id, self.name, self.age, self.gender)
+            raise ValueError("사용자 정보가 DB에 없습니다. FastAPI에서 미리 저장해야 합니다.")
 
         # 상담사 에이전트 초기화
         self.counselor_agent = CounselorAgent(
@@ -64,7 +65,6 @@ class TherapySimulation:
                 "timestamp": datetime.now().isoformat()
             })
 
-            # ✅ 상담사 응답 생성
             result = self.counselor_agent.generate_response(self.history, client_msg)
             reply = result["reply"]
             print("Counselor:", reply)
@@ -76,7 +76,6 @@ class TherapySimulation:
 
             save_chat_log(self.user_id, self.chat_id, client_msg, reply)
 
-        # ✅ 평가
         evaluation = self.evaluator_agent.evaluate_all(self.history)
         summary = self.evaluator_agent.generate_feedback_summary(self.history, evaluation)
 
@@ -85,6 +84,36 @@ class TherapySimulation:
             "history": self.history,
             "evaluation": evaluation
         }
+
+def run_chat_with_args(output_file: str | None, persona_type: str, chat_id: str, user_id: str):
+    sim = TherapySimulation(
+        persona_type=persona_type,
+        chat_id=chat_id,
+        user_id=user_id, 
+    )    
+    result = sim.run()
+
+    Path(output_file).parent.mkdir(parents=True, exist_ok=True)
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)
+
+def run_chat_fastapi(persona_type: str, chat_id: str, user_id: str) -> dict:
+    sim = TherapySimulation(
+        persona_type=persona_type,
+        chat_id=chat_id,
+        user_id=user_id
+    )
+    welcome_input = "상담을 시작하는 간단한 인사말과 상담사의 페르소나를 소개해 주세요. 이름과 나이를 밝혀주세요"
+    result = sim.counselor_agent.generate_response(sim.history, welcome_input)
+    reply = result["reply"]
+    sim.history.append({
+        "role": "counselor",
+        "message": reply
+    })
+    return {
+        "persona": persona_type,
+        "history": sim.history
+    }
 
 if __name__ == "__main__":
     import argparse
