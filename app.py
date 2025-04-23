@@ -14,7 +14,7 @@ http://13.125.242.109:8000/docs
     "chat_id": "new123456",
     "persona_type": "8살_민지원",
     "name": "새로운",
-    "age": 1,
+    "age": 1,   
     "gender": "남"
 }
 }

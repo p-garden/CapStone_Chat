@@ -50,6 +50,7 @@ class CounselorAgent:
             distortion=analysis["인지왜곡"],
             strategy_prompt=strategy_prompt
         )
+        print("최종 프롬프트:\n", filled_prompt)  # 추가된 부분
 
         # LLM 호출
         response = self.llm.invoke(filled_prompt)
