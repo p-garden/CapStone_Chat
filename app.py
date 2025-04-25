@@ -8,7 +8,9 @@ http://13.125.242.109:8000/docs
 {
     "user_id": "userPG",
     "chat_id": "PG123",
-    "persona_type": "8살_민지원"
+    "persona_type": "8살_민지원",
+    "user_input": "교수님과 미팅이 잘끝나서 너무 기분좋아"
+
 
     "user_id": "new123456",
     "chat_id": "new123456",
@@ -30,11 +32,10 @@ import json
 import uuid
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from chat import run_chat_with_args
+from chat import generate_response_from_input
 from DB import save_user_info, get_user_info, get_chat_log
 from typing import Optional
 from agents.counselor_agent import CounselorAgent
-
 
 app = FastAPI()
 
@@ -42,6 +43,7 @@ class ChatRequest(BaseModel):
     user_id: str
     chat_id: str
     persona_type: str
+    user_input: str
     name: Optional[str] = None
     age: Optional[int] = None
     gender: Optional[str] = None
@@ -64,30 +66,25 @@ async def start_chat_endpoint(request: ChatRequest):
         gender = request.gender
         save_user_info(request.user_id, name, age, gender)
 
-    chat_log = get_chat_log(request.chat_id)
+    chat_log = get_chat_log(request.chat_id) or []
     history = []
 
     if chat_log and isinstance(chat_log, list) and isinstance(chat_log[0], dict) and 'role' in chat_log[0]:
         history = chat_log
-    else:
-        counselor_agent = CounselorAgent(
-            client_info=f"{name}, {age}세, {gender}",
-            persona_type=request.persona_type
-        )
-        welcome_input = "상담을 시작하는 간단한 인사말과 상담사의 페르소나를 소개해 주세요. 이름과 나이를 밝혀주세요"
-        result = counselor_agent.generate_response([], welcome_input)
-        welcome_message = result.get("reply", "상담사가 인사말을 준비 중이에요.")
-        history = [{"role": "counselor", "message": welcome_message}]
+    
 
-    output_file = f"results/{uuid.uuid4().hex}.json"
-    run_chat_with_args(output_file, request.persona_type, request.chat_id, request.user_id)
-
-    with open(output_file, "r", encoding="utf-8") as f:
-        result = json.load(f)
+    bot_response = generate_response_from_input(
+        persona_type=request.persona_type,
+        chat_id=request.chat_id,
+        user_id=request.user_id,
+        client_msg=request.user_input,
+        user_name=name,
+        user_age=age,
+        user_gender=gender,
+    )
 
     return {
-        "bot_response": result["history"][-1]["message"],
-        "history": history
+        "bot_response": bot_response
     }
 
 @app.get("/get_chat_log/{chat_id}")
