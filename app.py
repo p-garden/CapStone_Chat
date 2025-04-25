@@ -1,5 +1,5 @@
 """1
- ssh -i "PG.pem" ubuntu@13.125.242.109
+ssh -i "PG.pem" ubuntu@13.125.242.109
 cd ~/CapStone 
 source venv/bin/activate
 uvicorn app:app --host 0.0.0.0 --port 8000
@@ -17,7 +17,13 @@ http://13.125.242.109:8000/docs
     "age": 1,   
     "gender": "남"
 }
-}
+rsync -avz \
+  --exclude 'venv' \
+  --exclude '__pycache__' \
+  --exclude 'results' \
+  -e "ssh -i ~/Desktop/code/CapStone/PG.pem" \
+  ~/Desktop/code/CapStone/ \
+  ubuntu@13.125.242.109:~/CapStone
 
 """
 import json

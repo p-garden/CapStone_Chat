@@ -31,7 +31,6 @@ class CounselorAgent:
 
         # SubLLM 분석
         analysis = self.subllm.analyze(current_input)
-        print("[🔍 SubLLM 분석 결과]", analysis)
 
         # 전략 프롬프트 조합 (위치 기반 인자 전달!)
         strategy_prompt = build_prompt_with_strategies(
@@ -39,6 +38,8 @@ class CounselorAgent:
             analysis["상담단계"],
             analysis["상담접근법"]
         )
+        print("🔧 [디버깅] 생성된 strategy_prompt:")
+        print(strategy_prompt)
 
         # 최종 프롬프트 채우기
         filled_prompt = self.prompt_template.format(
@@ -50,7 +51,6 @@ class CounselorAgent:
             distortion=analysis["인지왜곡"],
             strategy_prompt=strategy_prompt
         )
-        print("최종 프롬프트:\n", filled_prompt)  # 추가된 부분
 
         # LLM 호출
         response = self.llm.invoke(filled_prompt)

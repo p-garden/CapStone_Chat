@@ -1,5 +1,6 @@
-#docker build -t capstone-fastapi .
-#docker run -d -p 8000:8000 capstone-fastapi
+#docker build --no-cache -t capstone-fastapi .
+#docker run -d -p 8000:8000 --name capstone_container capstone-fastapi
+
 
 # 1. Python 기반 이미지
 FROM python:3.10-slim

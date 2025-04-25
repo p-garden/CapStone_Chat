@@ -1,14 +1,12 @@
 from pymongo import MongoClient
 from datetime import datetime
 import os
-from dotenv import load_dotenv
+from config import load_config
 
-# .env 파일을 로드
-load_dotenv()
 
-# 환경 변수에서 MongoDB URI를 가져오기
-mongo_uri = os.getenv("MONGO_URI")
-
+# YAML 설정 파일에서 MongoDB URI를 가져오기
+config = load_config()
+mongo_uri = config["mongodb"]["uri"]
 # MongoDB 클라이언트 연결
 client = MongoClient(mongo_uri)
 db = client['mindAI']  # 'mindAI' 데이터베이스 사용

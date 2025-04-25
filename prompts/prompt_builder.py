@@ -37,5 +37,4 @@ def build_prompt_with_strategies(reaction_type: str, stage: str, approach: str) 
     combined_prompt = "\n\n".join([
         part for part in [stage_prompt, reaction_prompt, approach_prompt] if part
     ])
-    print("🧾 [최종 조합된 프롬프트]:", combined_prompt[:80], "...")
     return combined_prompt
