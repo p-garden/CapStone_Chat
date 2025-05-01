@@ -60,7 +60,8 @@ class CounselorAgent:
         reply = reply_match.group(1).strip() if reply_match else content.strip()
 
         return {
-            "reply": reply
-        }
+            "reply": reply,
+            "analysis": analysis
+            }
 
    

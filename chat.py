@@ -41,22 +41,26 @@ class TherapySimulation:
         self.evaluator_agent = EvaluatorAgent()
 
     def run_single_turn(self, message: str):
-        self.history.append({
-            "role": "client",
-            "message": message,
-            "timestamp": datetime.now().isoformat()
-        })
-
+        timestamp = datetime.now().isoformat()
         result = self.counselor_agent.generate_response(self.history, message)
         reply = result["reply"]
+        analysis = result.get("analysis", {})
 
-        self.history.append({
+        user_entry = {
+            "role": "client",
+            "message": message,
+            "timestamp": timestamp,
+            "analysis": analysis
+        }
+
+        bot_entry = {
             "role": "counselor",
             "message": reply,
             "timestamp": datetime.now().isoformat()
-        })
+        }
 
-        save_chat_log(self.userId, self.chatId, message, reply)
+        self.history.extend([user_entry, bot_entry])
+        save_chat_log(self.userId, self.chatId, user_entry, bot_entry)
 
         return reply
 

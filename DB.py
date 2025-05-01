@@ -18,41 +18,17 @@ def save_chat_log(userId, chatId, user_message, bot_response):
     """
     사용자의 메시지와 챗봇의 응답을 채팅 로그에 저장
     """ 
-    # 현재 시간
-    timestamp = datetime.now().isoformat()
-
-    # 채팅 로그 데이터
-    chat_log_entry = {
-        "userId": userId,
-        "chatId": chatId,
-        "timestamp": timestamp,
-        "messages": [
-            {
-                "role": "user",
-                "message": user_message,
-                "timestamp": timestamp
-            },
-            {
-                "role": "bot",
-                "message": bot_response,
-                "timestamp": timestamp
+    chat_collection.update_one(
+        {"chatId": chatId, "userId": userId},
+        {
+            "$push": {
+                "messages": {
+                    "$each": [user_message, bot_response]
+                }
             }
-        ]
-    }
-
-    # MongoDB에 채팅 로그 저장 (업데이트 혹은 새로 추가)
-    chat_collection.update_one(
-        {"chatId": chatId},  # chat_id가 존재하는지 확인
-        {"$push": {"messages": {"role": "user", "message": user_message, "timestamp": timestamp}}},
-        upsert=True  # chat_id가 없다면 새로 생성
+        },
+        upsert=True
     )
-    
-    chat_collection.update_one(
-        {"chatId": chatId},
-        {"$push": {"messages": {"role": "bot", "message": bot_response, "timestamp": timestamp}}},
-        upsert=True  # chat_id가 없다면 새로 생성
-    )
-
     print(f"Chat log for chat_id {chatId} has been saved successfully!")
 
 # 채팅 로그 불러오기 함수
@@ -98,4 +74,4 @@ def get_user_info(userId):
     else:
         return None
     
-    
+   
