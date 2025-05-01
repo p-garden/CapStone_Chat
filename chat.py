@@ -15,20 +15,20 @@ set_openai_api_key()
 
 # TherapySimulation 클래스에서 사용자 정보 확인
 class TherapySimulation:
-    def __init__(self, persona_type: str, chat_id: str, user_id: str, user_name: str, user_age: int, user_gender: str):
-        self.persona_type = persona_type
-        self.chat_id = chat_id
-        self.user_id = user_id
-        self.name = user_name
-        self.age = user_age
-        self.gender = user_gender
+    def __init__(self, persona: str, chatId: int, userId: int, name: str, age: int, gender: str):
+        self.persona = persona
+        self.chatId = chatId
+        self.userId = userId
+        self.name = name
+        self.age = age
+        self.gender = gender
         self.history = []
 
         # Load chat log if it exists
-        chat_log = get_chat_log(self.chat_id)
+        chat_log = get_chat_log(self.chatId)
         self.counselor_agent = CounselorAgent(
             client_info = f"이름: {self.name}, 나이: {self.age}세, 성별: {self.gender}",
-            persona_type=self.persona_type
+            persona=self.persona
         )
 
         if chat_log and isinstance(chat_log, list) and isinstance(chat_log[0], dict) and 'role' in chat_log[0]:
@@ -40,14 +40,14 @@ class TherapySimulation:
         self.subllm_agent = SubLLMAgent()
         self.evaluator_agent = EvaluatorAgent()
 
-    def run_single_turn(self, client_msg: str):
+    def run_single_turn(self, message: str):
         self.history.append({
             "role": "client",
-            "message": client_msg,
+            "message": message,
             "timestamp": datetime.now().isoformat()
         })
 
-        result = self.counselor_agent.generate_response(self.history, client_msg)
+        result = self.counselor_agent.generate_response(self.history, message)
         reply = result["reply"]
 
         self.history.append({
@@ -56,21 +56,21 @@ class TherapySimulation:
             "timestamp": datetime.now().isoformat()
         })
 
-        save_chat_log(self.user_id, self.chat_id, client_msg, reply)
+        save_chat_log(self.userId, self.chatId, message, reply)
 
         return reply
 
-def generate_response_from_input(persona_type: str, chat_id: str, user_id: str, user_name: str, user_age: int, 
-                                 user_gender: str, client_msg: str):
+def generate_response_from_input(persona: str, chatId: int, userId: int, name: str, age: int, 
+                                 gender: str, message: str):
     sim = TherapySimulation(
-        persona_type=persona_type,
-        chat_id=chat_id,
-        user_id=user_id,
-        user_name=user_name,
-        user_age=user_age,
-        user_gender=user_gender
+        persona=persona,
+        chatId=chatId,
+        userId=userId,
+        name=name,
+        age=age,
+        gender=gender
     )
-    return sim.run_single_turn(client_msg)
+    return sim.run_single_turn(message)
 
 
 if __name__ == "__main__":

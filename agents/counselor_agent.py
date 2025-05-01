@@ -6,12 +6,12 @@ from prompts.prompt_builder import build_prompt_with_strategies
 import os
 import re
 class CounselorAgent:
-    def __init__(self, client_info, persona_type, model_name="gpt-4o-mini", temperature=0.7):
+    def __init__(self, client_info, persona, model_name="gpt-4o-mini", temperature=0.7):
         self.client_info = client_info
         self.llm = ChatOpenAI(model=model_name, temperature=temperature)
         self.subllm = SubLLMAgent()
         # Load persona prompt based on persona_type
-        persona_path = f"prompts/{persona_type}.txt"
+        persona_path = f"prompts/{persona}.txt"
         with open(persona_path, "r", encoding="utf-8") as f:
             self.persona_prompt = f.read()
 
@@ -38,8 +38,7 @@ class CounselorAgent:
             analysis["상담단계"],
             analysis["상담접근법"]
         )
-        print("🔧 [디버깅] 생성된 strategy_prompt:")
-        print(strategy_prompt)
+
 
         # 최종 프롬프트 채우기
         filled_prompt = self.prompt_template.format(

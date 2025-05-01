@@ -14,7 +14,7 @@ chat_collection = db['chat_logs']  # 'chat_logs' 컬렉션 사용
 user_collection = db['users']  # 사용자 정보 저장을 위한 컬렉션
 
 # 채팅 로그 저장 함수
-def save_chat_log(user_id, chat_id, user_message, bot_response):
+def save_chat_log(userId, chatId, user_message, bot_response):
     """
     사용자의 메시지와 챗봇의 응답을 채팅 로그에 저장
     """ 
@@ -23,8 +23,8 @@ def save_chat_log(user_id, chat_id, user_message, bot_response):
 
     # 채팅 로그 데이터
     chat_log_entry = {
-        "user_id": user_id,
-        "chat_id": chat_id,
+        "userId": userId,
+        "chatId": chatId,
         "timestamp": timestamp,
         "messages": [
             {
@@ -42,25 +42,25 @@ def save_chat_log(user_id, chat_id, user_message, bot_response):
 
     # MongoDB에 채팅 로그 저장 (업데이트 혹은 새로 추가)
     chat_collection.update_one(
-        {"chat_id": chat_id},  # chat_id가 존재하는지 확인
+        {"chatId": chatId},  # chat_id가 존재하는지 확인
         {"$push": {"messages": {"role": "user", "message": user_message, "timestamp": timestamp}}},
         upsert=True  # chat_id가 없다면 새로 생성
     )
     
     chat_collection.update_one(
-        {"chat_id": chat_id},
+        {"chatId": chatId},
         {"$push": {"messages": {"role": "bot", "message": bot_response, "timestamp": timestamp}}},
         upsert=True  # chat_id가 없다면 새로 생성
     )
 
-    print(f"Chat log for chat_id {chat_id} has been saved successfully!")
+    print(f"Chat log for chat_id {chatId} has been saved successfully!")
 
 # 채팅 로그 불러오기 함수
-def get_chat_log(chat_id):
+def get_chat_log(chatId):
     """
     특정 chat_id에 대한 채팅 로그를 불러옴
     """
-    chat_log = chat_collection.find_one({"chat_id": chat_id})
+    chat_log = chat_collection.find_one({"chatId": chatId})
     if chat_log:
         return chat_log['messages']  # 메시지 목록 반환
     else:
@@ -70,31 +70,31 @@ def get_chat_log(chat_id):
 """
 
 # 사용자 정보 저장 함수
-def save_user_info(user_id, name, age, gender):
+def save_user_info(userId, name, age, gender):
     """
     사용자 정보를 DB에 저장
     """
-    user_info = {
-        "user_id": user_id,
+    userInfo = {
+        "userId": userId,
         "name": name,
         "age": age,
         "gender": gender
     }
     user_collection.update_one(
-        {"user_id": user_id},  # user_id가 존재하는지 확인
-        {"$set": user_info},    # 사용자 정보 업데이트
+        {"userId": userId},  # user_id가 존재하는지 확인
+        {"$set": userInfo},    # 사용자 정보 업데이트
         upsert=True  # user_id가 없다면 새로 추가
     )
-    print(f"User info for {user_id} has been saved successfully!")
+    print(f"User info for {userId} has been saved successfully!")
 
 # 사용자 정보 불러오기 함수
-def get_user_info(user_id):
+def get_user_info(userId):
     """
     특정 user_id에 대한 사용자 정보를 불러옴
     """
-    user_info = user_collection.find_one({"user_id": user_id})
-    if user_info:
-        return user_info  # 사용자 정보 반환
+    userInfo = user_collection.find_one({"userId": userId})
+    if userInfo:
+        return userInfo  # 사용자 정보 반환
     else:
         return None
     
