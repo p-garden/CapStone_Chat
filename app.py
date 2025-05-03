@@ -22,12 +22,17 @@ rsync -avz \
   ~/Desktop/code/CapStone/ \
   ubuntu@13.125.242.109:~/CapStone
 
+  git push team-repo main:PG
+  git checkout PG
+  git pull team-repo PG --rebase
+  git push team-repo PG
 """
 import json
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from chat import generate_response_from_input
 from DB import save_user_info, get_user_info, get_chat_log
+from starter.generate_greet import generate_greet, load_prompt
 from typing import Optional
 from agents.counselor_agent import CounselorAgent
 from datetime import datetime
@@ -86,6 +91,48 @@ async def get_chat_log_endpoint(chatId: int):
         return {"chat_log": chat_log}  # ✅ 전체 로그 리스트 반환
     else:
         raise HTTPException(status_code=404, detail="Chat log found, but no message exist.")
+    
+# 먼저 말걸기 API
+class GreetRequest(BaseModel):
+    userId: int
+    chatId: int
+    persona: str
+    name: str
+    age: int
+    gender: str
+    topic: str
+    emotion: str
+    distortion: str
+    mainMission: str
+    subMission: str
+    calendar: str
+
+@app.post("/generate_greet")
+async def generate_greet_endpoint(request: GreetRequest):
+
+    persona_path = f"prompts/{request.persona}.txt"
+    persona = load_prompt(persona_path)
+    prompt_path = "starter/first.txt"
+    prompt_template = load_prompt(prompt_path)
+
+    filled_prompt = prompt_template.format(
+        persona=persona,
+        topic = request.topic,
+        emotion=request.emotion,
+        distortion=request.distortion,
+        mainMission=request.mainMission,
+        subMission=request.subMission,
+        calendar=request.calendar
+    )
+
+    reply = generate_greet(filled_prompt)
+    return {
+        "userId": request.userId,
+        "chatId": request.chatId,
+        "greeting": reply,
+        "timestamp": datetime.now().isoformat()
+    }
+
 @app.get("/docs")
 def get_docs():
     return {"message": "Swagger UI will be here!"}

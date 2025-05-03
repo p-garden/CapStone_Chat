@@ -3,6 +3,9 @@
 
 [ 중요한 사용자 정보 ]
 
+[ 대화 주제 (mission_topic) ]
+{topic}
+
 [ 감정 상태 (emotion) ]
 {emotion}
 
@@ -10,16 +13,16 @@
 {distortion}
 
 [ 오늘의 미션 ]
-- 메인 미션: {main_mission}
-- 서브 미션: {sub_mission}
+- 메인 미션: {mainMission}
+- 서브 미션: {subMission}
 
 [ 오늘의 일정 (캘린더 요약) ]
-{calendar_info}
+{calendar}
 
 ---
 
 [ 페르소나 설정 정보 ]
-{persona_prompt}
+{persona}
 
 **아래의 기준을 지켜 한 문단 이내의 인삿말을 생성하세요**:
 
