@@ -75,3 +75,19 @@ def get_user_info(userId):
         return None
     
    
+"""
+
+def save_analysis(userId: int, chatId: int, topic: str, emotion: list, distortion: list, mainMission: list, subMission: list):
+    analysis_doc = {
+        "userId": userId,
+        "chatId": chatId,
+        "timestamp": datetime.now().isoformat(),
+        "topic": topic,
+        "emotion": emotion,
+        "distortion": distortion,
+        "mainMission": mainMission,
+        "subMission": subMission
+    }
+    analysis_collection.insert_one(analysis_doc)
+    print(f"Analysis for chatId {chatId} of userId {userId} has been saved.")
+"""

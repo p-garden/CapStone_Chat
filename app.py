@@ -1,23 +1,19 @@
 """1
-ssh -i "PG.pem" ubuntu@13.125.242.109
+ssh -i "PG.pem" ubuntu@43.200.169.229
 cd ~/CapStone 
 source venv/bin/activate
 docker로 넘어가기
 uvicorn app:app --host 0.0.0.0 --port 8000
 http://0.0.0.0:8000/docs
-http://13.125.242.109:8000/docs
+http://43.200.169.229:8000
 {
-    "user_id": "userPG",
-    "chat_id": "PG123",
-    "persona_type": "8살_민지원",
-    "user_input": "교수님과 미팅이 잘끝나서 너무 기분좋아"
-
-    "user_id": "new123456",
-    "chat_id": "new123456",
-    "persona_type": "8살_민지원",
-    "name": "새로운",
-    "age": 1,   
-    "gender": "남"
+  "userId": 1,
+  "chatId": 1,
+  "persona": "26살_한여름",
+  "message": "오늘도 기분이 너무 좋아",
+  "name": "박정원",
+  "age": 26,
+  "gender": "남자"
 }
 rsync -avz \
   --exclude '__pycache__' \
