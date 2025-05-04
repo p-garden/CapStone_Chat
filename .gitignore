@@ -7,3 +7,4 @@ test_code/
 vector_store.py
 logs/
 *.pem
+static/

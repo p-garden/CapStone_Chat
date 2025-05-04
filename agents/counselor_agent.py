@@ -1,28 +1,29 @@
 from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import AIMessage
 from agents.subllm_agent import SubLLMAgent
 from prompts.prompt_builder import build_prompt_with_strategies
 import os
 import re
-
 class CounselorAgent:
-    def __init__(self, client_info, persona_type, model_name="gpt-4o-mini", temperature=0.7):
+    def __init__(self, client_info, persona, model_name="gpt-4o-mini", temperature=0.7):
         self.client_info = client_info
         self.llm = ChatOpenAI(model=model_name, temperature=temperature)
         self.subllm = SubLLMAgent()
-
-        # 페르소나 프롬프트 로드
-        persona_path = f"prompts/페르소나/{persona_type}.txt"
+        # Load persona prompt based on persona_type
+        persona_path = f"prompts/{persona}.txt"
         with open(persona_path, "r", encoding="utf-8") as f:
             self.persona_prompt = f.read()
 
-        # 메인 프롬프트 로드
         self.prompt_template = self.load_prompt_template()
 
     def load_prompt_template(self):
         with open("prompts/counselor_prompt.txt", "r", encoding="utf-8") as f:
             return f.read()
 
+    # 감정과 인지 왜곡에 맞는 전략 결합
+        return f"{emotion_strategy} {distortion_strategy}"
+    
     def generate_response(self, history, current_input):
         formatted_history = "\n".join([
             f"{msg['role'].capitalize()}: {msg['message']}" for msg in history
@@ -30,7 +31,6 @@ class CounselorAgent:
 
         # SubLLM 분석
         analysis = self.subllm.analyze(current_input)
-        print("[🔍 SubLLM 분석 결과]", analysis)
 
         # 전략 프롬프트 조합 (위치 기반 인자 전달!)
         strategy_prompt = build_prompt_with_strategies(
@@ -38,6 +38,7 @@ class CounselorAgent:
             analysis["상담단계"],
             analysis["상담접근법"]
         )
+
 
         # 최종 프롬프트 채우기
         filled_prompt = self.prompt_template.format(
@@ -59,5 +60,8 @@ class CounselorAgent:
         reply = reply_match.group(1).strip() if reply_match else content.strip()
 
         return {
-            "reply": reply
-        }
+            "reply": reply,
+            "analysis": analysis
+            }
+
+   

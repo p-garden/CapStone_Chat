@@ -1,5 +1,6 @@
-#docker build -t capstone-fastapi .
-#docker run -d -p 8000:8000 capstone-fastapi
+#docker build --no-cache -t capstone-fastapi .
+#docker run -d -p 8000:8000 --name capstone_container capstone-fastapi
+#docker start capstone_container
 
 # 1. Python 기반 이미지
 FROM python:3.10-slim
@@ -19,7 +20,3 @@ EXPOSE 8000
 
 # 6. 앱 실행 (여기서 app:app 은 app.py 내부의 FastAPI 인스턴스를 의미)
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
-
-# Dockerfile 내에 locale 설정 추가
-RUN apt-get update && apt-get install -y locales && \
-    locale-gen ko_KR.UTF-8

@@ -7,13 +7,15 @@ USER_ID = os.getenv("USER_ID", "user_001")
 
 # 기본 디렉토리 설정
 BASE_DIR = Path(__file__).resolve().parent
-VECTOR_DIR = BASE_DIR / "vector_store"
 DATA_DIR = BASE_DIR / "data"
 PROMPT_DIR = BASE_DIR / "prompts"
 LOG_DIR = BASE_DIR / "logs"
+AUDIO_DIR = BASE_DIR / "static"
+AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+
 
 # 디렉토리 생성
-for path in [VECTOR_DIR, DATA_DIR, PROMPT_DIR, LOG_DIR]:
+for path in [DATA_DIR, PROMPT_DIR, LOG_DIR]:
     path.mkdir(parents=True, exist_ok=True)
 
 def load_prompt(file_name):
@@ -35,3 +37,4 @@ def load_config():
 def set_openai_api_key():
     config = load_config()
     os.environ["OPENAI_API_KEY"] = config["openai"]["key"]
+
