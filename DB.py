@@ -29,7 +29,7 @@ def save_chat_log(userId, chatId, user_message, bot_response):
         },
         upsert=True
     )
-    print(f"Chat log for chat_id {chatId} has been saved successfully!")
+    print(f"Chat log for chatId {chatId} has been saved successfully!")
 
 # 채팅 로그 불러오기 함수
 def get_chat_log(chatId):

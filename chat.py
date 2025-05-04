@@ -56,7 +56,8 @@ class TherapySimulation:
         bot_entry = {
             "role": "counselor",
             "message": reply,
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
+            "persona": self.persona  # 현재 사용된 페르소나 저장
         }
 
         self.history.extend([user_entry, bot_entry])

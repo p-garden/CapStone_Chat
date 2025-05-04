@@ -6,7 +6,7 @@ import argparse
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from config import get_config, set_openai_api_key
-from DB import save_chat_log
+from DB import save_chat_log, get_chat_log
 from datetime import datetime
 set_openai_api_key()
 
@@ -30,22 +30,33 @@ def generate_greet(prompt: str, userId: str, chatId: str, model_name="gpt-4o-min
     reply_match = re.search(r"상담사\s*응답[:：]?\s*(.*?)(?=\n|$)", content, re.DOTALL)
     reply = reply_match.group(1).strip() if reply_match else content.strip()
 
-    return {
-        "reply": reply,
+    return {  
         "userId": userId,
-        "chatId": chatId
+        "chatId": chatId,
+        "reply": reply
     }
 
 if __name__ == "__main__":
     prompt_path = "starter/first.txt"
     prompt = load_prompt(prompt_path)
     persona_dir = "prompts"
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--persona", type=str, required=True, help="페르소나 이름 (예: 8살_민지원)")
     parser.add_argument("--userId", type=int, required=True, help="사용자 ID")
     parser.add_argument("--chatId", type=int, required=True, help="채팅방 ID")
     args = parser.parse_args()
-    persona_prompt_path = os.path.join(persona_dir, f"{args.persona}.txt")
+
+    chat_log = get_chat_log(args.chatId)
+    recent_persona = None
+    for message in reversed(chat_log):
+        if message.get("role") == "counselor" and "persona" in message:
+            recent_persona = message["persona"]
+            break
+
+    if not recent_persona:
+        raise ValueError("최근 페르소나 정보를 찾을 수 없습니다.")
+
+    persona_prompt_path = os.path.join(persona_dir, f"{recent_persona}.txt")
     persona = load_prompt(persona_prompt_path)
 
     # 임시 사용자 정보

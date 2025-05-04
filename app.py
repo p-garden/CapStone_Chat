@@ -61,7 +61,7 @@ async def start_chat_endpoint(request: ChatRequest):
     if chat_log and isinstance(chat_log, list) and isinstance(chat_log[0], dict) and 'role' in chat_log[0]:
         history = chat_log
 
-    bot_response = generate_response_from_input(
+    botResponse = generate_response_from_input(
         persona=request.persona,
         chatId=request.chatId,
         userId=request.userId,
@@ -74,13 +74,13 @@ async def start_chat_endpoint(request: ChatRequest):
     return {
         "userId" : request.userId,
         "chatId" : request.chatId,
-        "bot_response": bot_response,
+        "botResponse": botResponse,
         "timestamp" : datetime.now().isoformat()
     }
 
-@app.get("/get_chat_log/{chat_id}")
+@app.get("/get_chat_log/{chatId}")
 async def get_chat_log_endpoint(chatId: int):
-    chat_log = get_chat_log(chatId)
+    chat_log = get_chat_log(int(chatId))
 
     if not chat_log:
         # If no chat log found, return an appropriate error message
