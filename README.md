@@ -1,29 +1,50 @@
 # CapStone_Chat
-2025-1학기 세종대학교 캡스톤 "심리상담 서비스" AI파트
+2025-1학기 세종대학교 캡스톤 "심리상담 서비스" AI파트  
+CapStone_Chat/    
 CapStone/  
-├── chat.py                     # 💬 전체 상담 세션 실행 메인 루프   
-├── config.py                   # ⚙️ 경로, 설정값 등 공통 설정   
 │  
-├── agents/                     # 🤖 에이전트(모델 역할자) 모듈    
-│   ├── client_agent.py         # 내담자 역할 에이전트    
-│   ├── counselor_agent.py      # 상담자 역할 에이전트 (서비스용), main LLM   
-│   ├── evaluator_agent.py      # 평가자 역할 에이전트 (내부 평가용)  
-|   ├── cbt_agent.py            # 에이전트 AI(Assist RAG, 보조 LLM) 감정 소분류, 인지오류, CBT전략등  사용자의 정보를 파악해서 프롬포트 맞춤형 생성 
+├── app.py                # FastAPI 서버 메인 파일 (API 라우터 정의)  
+├── chat.py               # 상담 세션 관리 및 대화 처리 (TherapySimulation 클래스)  
+├── DB.py                 # MongoDB 연결 및 대화/사용자 정보 저장/조회 함수  
+├── config.py             # 설정 로드 (API 키, 환경변수 등)  
+├── DockerFile            # Docker 빌드 파일  
+├── README.md             # 프로젝트 소개 문서  
+├── requirements.txt      # 필요한 Python 패키지 목록  
 │  
-├── prompts/                    # 📝 모든 에이전트용 프롬프트 텍스트 파일    
-│   ├── agent_counselor.txt  
-│   └── ...  
+├── agents/               # 🤖 에이전트 관련 코드 모음  
+│   ├── counselor_agent.py    # 메인 상담사 응답 생성 (LLM 호출)  
+│   ├── evaluator_agent.py    # 대화 평가 및 요약 담당  
+│   └── subllm_agent.py       # 감정, 왜곡 등 서브 모델 분석  
 │  
-├── data/                       # 🗂️ 대화 샘플, 감정 분석 결과 등 저장 위치  
-│   ├── example1.json      # 내담자 정보및 시작대화
-│   └── ...       
-│   
-├── results/                    # 📊 평가 결과 저장  
-│   ├── emotion_results.json    # 감정 평가 결과 
-│   ├── evaluation_scores.json  # 평가자 채점 결과    
-│   └── ...  
-│
-├── logs/     
-│   ├── chat_log.json           # 1:1 대화 기록 저장  
-│
-└── README.md                   # 📘 프로젝트 설명서  
+prompts/  
+│  
+├── cure/                     # 상담 기법 (치료 방식) 프롬프트  
+│   ├── 없음.txt                 # 치료 전략이 아직 없을 경우  
+│   ├── ACT.txt                 # 수용전념치료 (Acceptance & Commitment Therapy)  
+│   ├── CBT.txt                 # 인지행동치료 (Cognitive Behavioral Therapy)  
+│   ├── PCT.txt                 # 인간중심치료 (Person-Centered Therapy)  
+│   ├── PDT.txt                 # 정신역동치료 (Psychodynamic Therapy)  
+│   └── SFBT.txt                # 해결중심치료 (Solution-Focused Brief Therapy)  
+│  
+├── react/                    # 내담자의 반응 유형 (태도) 프롬프트  
+│   ├── 없음.txt                 # 반응 없음 또는   
+│   ├── 의존적.txt               # 지나치게 의존적인 태도  
+│   ├── 저항적.txt               # 방어적, 회피적인 반응  
+│   ├── 적대적.txt               # 공격적, 반항적인 반응  
+│   └── 협조적.txt               # 긍정적이고 열린 태도  
+│  
+├── stage/                    # 상담 단계별 프롬프트  
+│   ├── 없음.txt                 # 단계 미정  
+│   ├── 1단계.txt                # 관계 형성 및 라포 구축 단계  
+│   ├── 2단계.txt                # 감정 탐색 및 문제 인식  
+│   ├── 3단계.txt                # 통찰 및 인지 재구성  
+│   ├── 4단계.txt                # 행동 변화 유도  
+│   └── 5단계.txt                # 상담 마무리 및 재발 방지  
+│  
+├── 8살_민지원.txt  
+├──  26살_한여름.txt  
+├──  55살_김서연.txt  
+├── counselor_prompt.txt     # 상담사 공통 응답 프레임워크  
+├── evaluation_combined.txt  # 평가 (감정 변화, 전략 평가 등) 통합 프롬프트     
+├── prompt_builder.py        # 위의 프롬프트들을 조립하여 GPT 입력 생성  
+└── subllm_prompt.txt        # 감정 분석/왜곡 탐지용 서브 LLM 프롬프트  

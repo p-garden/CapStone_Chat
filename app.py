@@ -44,6 +44,7 @@ app = FastAPI()
 # static 폴더 서빙 추가
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
 class ChatRequest(BaseModel):
     userId: int
     chatId: int

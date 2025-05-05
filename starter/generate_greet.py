@@ -88,4 +88,5 @@ if __name__ == "__main__":
         "message": response["reply"],
         "timestamp": datetime.now().isoformat()
     }
+
     save_chat_log(args.userId, args.chatId, user_message={}, bot_response=bot_message)
