@@ -10,6 +10,9 @@ BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 PROMPT_DIR = BASE_DIR / "prompts"
 LOG_DIR = BASE_DIR / "logs"
+AUDIO_DIR = BASE_DIR / "static"
+AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+
 
 # 디렉토리 생성
 for path in [DATA_DIR, PROMPT_DIR, LOG_DIR]:
@@ -34,3 +37,4 @@ def load_config():
 def set_openai_api_key():
     config = load_config()
     os.environ["OPENAI_API_KEY"] = config["openai"]["key"]
+

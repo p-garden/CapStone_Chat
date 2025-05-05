@@ -37,4 +37,5 @@ def build_prompt_with_strategies(reaction_type: str, stage: str, approach: str) 
     combined_prompt = "\n\n".join([
         part for part in [stage_prompt, reaction_prompt, approach_prompt] if part
     ])
+
     return combined_prompt

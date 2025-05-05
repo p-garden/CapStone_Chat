@@ -36,8 +36,14 @@ from starter.generate_greet import generate_greet, load_prompt
 from typing import Optional
 from agents.counselor_agent import CounselorAgent
 from datetime import datetime
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+
+# static 폴더 서빙 추가
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 class ChatRequest(BaseModel):
     userId: int
@@ -136,3 +142,55 @@ async def generate_greet_endpoint(request: GreetRequest):
 @app.get("/docs")
 def get_docs():
     return {"message": "Swagger UI will be here!"}
+
+from fastapi import UploadFile, File
+import whisper
+from utils.tts_clova import clova_tts
+from datetime import datetime
+
+@app.post("/voice_chat")
+async def voice_chat(
+    userId: int,
+    chatId: int,
+    persona: str,
+    name: str,
+    age: int,
+    gender: str,
+    file: UploadFile = File(...)
+):
+    # 1. 음성 파일 저장
+    import tempfile, shutil
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
+        shutil.copyfileobj(file.file, tmp)
+        audio_path = tmp.name
+
+    # 2. Whisper로 텍스트 변환
+    model = whisper.load_model("base")
+    result = model.transcribe(audio_path)
+    input_text = result["text"]
+
+    # 3. GPT 응답 생성
+    from chat import generate_response_from_input
+    from chat import TherapySimulation
+    sim = TherapySimulation(
+        persona=persona, chatId=chatId, userId=userId,
+        name=name, age=age, gender=gender
+    )
+    result = sim.counselor_agent.generate_response(sim.history, input_text)
+    bot_response = result["reply"]
+    emotion = result["analysis"].get("감정", "없음")
+
+    # 4. Clova TTS
+    from config import AUDIO_DIR
+    mp3_filename = f"voice_response_{userId}_{chatId}.mp3"
+    mp3_path = AUDIO_DIR / mp3_filename
+    clova_tts(bot_response, persona_type=persona, emotion=emotion, output_path=str(mp3_path))
+
+    return {
+        "userId": userId,
+        "chatId": chatId,
+        "transcribedInput": input_text,
+        "botResponse": bot_response,
+        "audio_response_url": f"http://43.200.169.229:8000/static/{mp3_filename}",
+        "timestamp": datetime.now().isoformat()
+    }
