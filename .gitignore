@@ -10,3 +10,4 @@ results/
 *.pem
 outputs/
 .env
+static/

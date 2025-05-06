@@ -31,8 +31,6 @@ def generate_greet(prompt: str, userId: str, chatId: str, model_name="gpt-4o-min
     reply = reply_match.group(1).strip() if reply_match else content.strip()
 
     return {  
-        "userId": userId,
-        "chatId": chatId,
         "reply": reply
     }
 
@@ -77,16 +75,21 @@ if __name__ == "__main__":
         subMission=subMission,
         calendar=calendar 
         )
-    print("\n📤 입력 프롬프트:\n", filled_prompt)
 
     response = generate_greet(filled_prompt, args.userId, args.chatId)
-    print("\n🤖 GPT 응답:\n", response)
 
     # 챗봇 응답만 저장
     bot_message = {
         "role": "counselor",
         "message": response["reply"],
-        "timestamp": datetime.now().isoformat()
+        "timestamp": datetime.now().isoformat(),
+        "persona": recent_persona}
+
+    user_message = {
+        "role": "client",
+        "message": "",
+        "timestamp": datetime.now().isoformat(),
+        "analysis": ""
     }
 
-    save_chat_log(args.userId, args.chatId, user_message={}, bot_response=bot_message)
+    save_chat_log(args.userId, args.chatId, user_message=user_message, bot_response=bot_message)
