@@ -38,9 +38,24 @@ from agents.counselor_agent import CounselorAgent
 from datetime import datetime
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+# 허용할 origin 목록
+origins = [
+    "http://43.200.169.229:8000",  # 프론트엔드 주소 (예시)
+    "https://test-sso.online",  # 실제 서버 도메인
+]
+
+# CORS 미들웨어 추가
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,            # 허용할 Origin
+    allow_credentials=True,
+    allow_methods=["*"],              # 허용할 HTTP 메서드 (GET, POST 등)
+    allow_headers=["*"],              # 허용할 헤더
+)
 # static 폴더 서빙 추가
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
