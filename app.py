@@ -31,7 +31,7 @@ import json
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from chat import generate_response_from_input
-from DB import save_user_info, get_user_info, get_chat_log
+from DB import save_user_info, get_user_info, get_chat_log, save_analysis_report
 from starter.generate_greet import generate_greet, load_prompt
 from typing import Optional
 from agents.counselor_agent import CounselorAgent
@@ -39,6 +39,8 @@ from datetime import datetime
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from report import generate_analysis_report  
+  
 
 app = FastAPI()
 
@@ -209,8 +211,40 @@ async def voice_chat(request: VoiceChatRequest):
     return {
         "userId": request.userId,
         "chatId": request.chatId,
-        "message": request.message,
         "botResponse": bot_response,
         "audioResponse": f"http://127.0.0.1:8000/static/{mp3_filename}",
         "timestamp": datetime.now().isoformat()
     }
+
+from report import generate_analysis_report
+class ReportRequest(BaseModel):
+    userId: int
+    chatId: int
+
+@app.post("/generate_report/")
+async def generate_report_post(request: ReportRequest):
+    try:
+        print("🚀 Report 요청:", request.chatId, request.userId)
+
+        report = generate_analysis_report(chatId=request.chatId, userId=request.userId)
+
+        save_analysis_report(
+            chatId=request.chatId,
+            userId=request.userId,
+            topic=report["missionTopic"],
+            emotion=report["missionEmotion"],
+            distortion=report["missionDistortion"],
+            mainMission=report["mainMission"],
+            subMission=report["subMission"],
+            timestamp=str(datetime.now())
+        )
+        return {
+            "userId": request.userId,
+            "chatId": request.chatId,
+            "timestamp": str(datetime.now()),
+            "report": report
+        }
+
+    except Exception as e:
+        print("❗ 예외 발생:", str(e))  # ✅ 여기에 로그 출력
+        raise HTTPException(status_code=500, detail=str(e))

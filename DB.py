@@ -12,6 +12,7 @@ client = MongoClient(mongo_uri)
 db = client['mindAI']  # 'mindAI' 데이터베이스 사용
 chat_collection = db['chat_logs']  # 'chat_logs' 컬렉션 사용
 user_collection = db['users']  # 사용자 정보 저장을 위한 컬렉션
+analysis_collection = db['analysis_reports']  # 분석 리포트 저장용
 
 # 채팅 로그 저장 함수
 def save_chat_log(userId, chatId, user_message, bot_response):
@@ -75,19 +76,36 @@ def get_user_info(userId):
         return None
     
    
-"""
-
-def save_analysis(userId: int, chatId: int, topic: str, emotion: list, distortion: list, mainMission: list, subMission: list):
+def save_analysis_report(userId, chatId, topic, emotion, distortion, mainMission, subMission, timestamp):
+    """
+    분석 결과를 DB에 저장 (존재 시 업데이트, 없으면 생성)
+    """
     analysis_doc = {
         "userId": userId,
         "chatId": chatId,
-        "timestamp": datetime.now().isoformat(),
         "topic": topic,
         "emotion": emotion,
         "distortion": distortion,
         "mainMission": mainMission,
-        "subMission": subMission
+        "subMission": subMission,
+        "timestamp": datetime.now().isoformat()
     }
-    analysis_collection.insert_one(analysis_doc)
-    print(f"Analysis for chatId {chatId} of userId {userId} has been saved.")
-"""
+    analysis_collection.update_one(
+        {"userId": userId, "chatId": chatId},
+        {"$set": analysis_doc},
+        upsert=True
+    )
+    print(f"analysis report for {chatId} has been saved successfully!")
+
+
+
+# 분석 리포트 불러오기 함수
+def get_analysis_report(userId, chatId):
+    """
+    특정 userId와 chatId에 해당하는 분석 리포트를 불러옴
+    """
+    report = analysis_collection.find_one({"userId": userId, "chatId": chatId})
+    if report:
+        return report
+    else:
+        return None
