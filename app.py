@@ -167,50 +167,31 @@ async def generate_greet_endpoint(request: GreetRequest):
 def get_docs():
     return {"message": "Swagger UI will be here!"}
 
-from fastapi import UploadFile, File, Form
 from openai import OpenAI
 from utils.tts_clova import clova_tts
 
+class VoiceChatRequest(BaseModel):
+    userId: int
+    chatId: int
+    persona: str
+    message: str
+    name: str
+    age: int
+    gender: str
+
 @app.post("/voice_chat")
-async def voice_chat(
-    userId: int = Form(...),
-    chatId: int = Form(...),
-    persona: str = Form(...),
-    name: str = Form(...),
-    age: int = Form(...),
-    gender: str = Form(...),
-    file: UploadFile = File(...)
-):
-
-    # 1. 음성 파일 저장
-    import tempfile, shutil
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-        shutil.copyfileobj(file.file, tmp)
-        audio_path = tmp.name
-
-    # 2. Whisper로 텍스트 변환 (OpenAI API 사용)
-
-    from utils.tts_clova import get_openai_client
-
-    client = get_openai_client()
-
-    with open(audio_path, "rb") as audio_file:
-        input_text = client.audio.transcriptions.create(
-            model="whisper-1",
-            file=audio_file,
-            response_format="text"
-        )
+async def voice_chat(request: VoiceChatRequest):
 
     # 3. GPT 응답 생성 (공통 로직 재사용)
     from chat import generate_response_from_input
     response_data = generate_response_from_input(
-        persona=persona,
-        chatId=chatId,
-        userId=userId,
-        message=input_text,
-        name=name,
-        age=age,
-        gender=gender,
+        persona=request.persona,
+        chatId=request.chatId,
+        userId=request.userId,
+        message=request.message,
+        name=request.name,
+        age=request.age,
+        gender=request.gender,
     )
     if isinstance(response_data, dict):
         bot_response = response_data.get("reply", "")
@@ -221,14 +202,14 @@ async def voice_chat(
 
     # 4. Clova TTS
     from config import AUDIO_DIR
-    mp3_filename = f"voice_response_{userId}_{chatId}.mp3"
+    mp3_filename = f"voice_response_{request.userId}_{request.chatId}.mp3"
     mp3_path = AUDIO_DIR / mp3_filename
-    clova_tts(bot_response, persona_type=persona, emotion=emotion, output_path=str(mp3_path))
+    clova_tts(bot_response, persona_type=request.persona, emotion=emotion, output_path=str(mp3_path))
 
     return {
-        "userId": userId,
-        "chatId": chatId,
-        "message": input_text,
+        "userId": request.userId,
+        "chatId": request.chatId,
+        "message": request.message,
         "botResponse": bot_response,
         "audioResponse": f"http://127.0.0.1:8000/static/{mp3_filename}",
         "timestamp": datetime.now().isoformat()
