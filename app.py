@@ -152,21 +152,21 @@ async def generate_greet_endpoint(request: GreetRequest):
 def get_docs():
     return {"message": "Swagger UI will be here!"}
 
-from fastapi import UploadFile, File
+from fastapi import UploadFile, File, Form
 from openai import OpenAI
 from utils.tts_clova import clova_tts
-from datetime import datetime
 
 @app.post("/voice_chat")
 async def voice_chat(
-    userId: int,
-    chatId: int,
-    persona: str,
-    name: str,
-    age: int,
-    gender: str,
+    userId: int = Form(...),
+    chatId: int = Form(...),
+    persona: str = Form(...),
+    name: str = Form(...),
+    age: int = Form(...),
+    gender: str = Form(...),
     file: UploadFile = File(...)
 ):
+
     # 1. 음성 파일 저장
     import tempfile, shutil
     with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
