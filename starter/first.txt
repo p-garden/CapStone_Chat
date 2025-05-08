@@ -3,6 +3,9 @@
 
 [ 중요한 사용자 정보 ]
 
+[ 사용자 정보 (client_info) ]
+{clientInfo}
+
 [ 대화 주제 (mission_topic) ]
 {topic}
 

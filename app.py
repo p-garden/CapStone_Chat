@@ -122,42 +122,11 @@ class GreetRequest(BaseModel):
     name: str
     age: int
     gender: str
-
-
+    
+from starter.generate_greet import run_generate_greet
 @app.post("/generate_greet")
 async def generate_greet_endpoint(request: GreetRequest):
-
-    chat_log = get_chat_log(request.chatId)
-    recent_persona = None
-    for message in reversed(chat_log):
-        if message.get("role") == "counselor" and "persona" in message:
-            recent_persona = message["persona"]
-            break
-
-    if not recent_persona:
-        raise ValueError("최근 페르소나 정보를 찾을 수 없습니다.")
-
-    persona_path = f"prompts/{recent_persona}.txt"
-    persona = load_prompt(persona_path)
-    prompt_path = "starter/first.txt"
-    prompt_template = load_prompt(prompt_path)
-
-    filled_prompt = prompt_template.format(
-        persona=persona,
-        topic = request.topic,
-        emotion=request.emotion,
-        distortion=request.distortion,
-        mainMission=request.mainMission,
-        subMission=request.subMission    
-        )
-
-    reply = generate_greet(filled_prompt, request.userId, request.chatId)
-    return {
-        "userId": request.userId,
-        "chatId": request.chatId,
-        "greeting": reply,
-        "timestamp": datetime.now().isoformat()
-    }
+    return run_generate_greet(request.userId, request.chatId, request.name, request.age, request.gender)
 
 @app.get("/docs")
 def get_docs():
