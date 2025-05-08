@@ -7,6 +7,7 @@ import argparse
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from config import get_config, set_openai_api_key
 from DB import save_chat_log, get_chat_log
+from DB import get_analysis_report
 from datetime import datetime
 set_openai_api_key()
 
@@ -19,18 +20,47 @@ def load_prompt(file_path: str) -> str:
     with open(file_path, 'r', encoding='utf-8') as f:
         return f.read()
 
-def generate_greet(prompt: str, userId: str, chatId: str, model_name="gpt-4o-mini", temperature=0.7) -> dict:
+def generate_greet(prompt: str, userId: int, chatId: int, name: str, age: int, gender: str, model_name="gpt-4o-mini", temperature=0.7) -> dict:
+    from DB import get_analysis_report
     llm = ChatOpenAI(model=model_name, temperature=temperature)
-    
+
+    # 분석 리포트 로드
+    report = get_analysis_report(userId, chatId)
+    if not report:
+        raise ValueError("분석 리포트를 찾을 수 없습니다.")
+
+    # 분석 정보 추출
+    topic = report.get("topic", "")
+    emotion_data = report.get("emotion", {})
+    emotion = "\n".join([f"- {k}: {v}%" for k, v in emotion_data.items()])
+    distortion_list = report.get("distortion", [])
+    distortion = "\n".join([f"- {item['name']}" for item in distortion_list])
+    mainMission = report.get("mainMission", {}).get("title", "")
+    subMission_list = report.get("subMission", [])
+    subMission = "\n".join([f"- {item['title']}" for item in subMission_list])
+
+    # 이름, 나이, 성별 포함
+    client_info = f"이름: {name}, 나이: {age}세, 성별: {gender}"
+
+    # 프롬프트 채우기
+    filled_prompt = prompt.format(
+        client_info=client_info,
+        topic=topic,
+        emotion=emotion,
+        distortion=distortion,
+        mainMission=mainMission,
+        subMission=subMission
+    )
+
     # LLM 호출
-    response = llm.invoke(prompt)
+    response = llm.invoke(filled_prompt)
     content = response.content if isinstance(response, AIMessage) else str(response)
 
-    # 응답 추출 (선택 사항: 포맷이 존재하면 추출)
+    # 응답 추출
     reply_match = re.search(r"상담사\s*응답[:：]?\s*(.*?)(?=\n|$)", content, re.DOTALL)
     reply = reply_match.group(1).strip() if reply_match else content.strip()
 
-    return {  
+    return {
         "reply": reply
     }
 
@@ -46,6 +76,20 @@ if __name__ == "__main__":
 
     chat_log = get_chat_log(args.chatId)
     recent_persona = None
+
+    report = get_analysis_report(args.userId, args.chatId)
+    if not report:
+        raise ValueError("분석 리포트를 찾을 수 없습니다.")
+
+    topic = report.get("topic", "")
+    emotion_data = report.get("emotion", {})
+    emotion = "\n".join([f"- {k}: {v}%" for k, v in emotion_data.items()])
+    distortion_list = report.get("distortion", [])
+    distortion = "\n".join([f"- {item['name']}" for item in distortion_list])
+    mainMission = report.get("mainMission", {}).get("title", "")
+    subMission_list = report.get("subMission", [])
+    subMission = "\n".join([f"- {item['title']}" for item in subMission_list])
+
     for message in reversed(chat_log):
         if message.get("role") == "counselor" and "persona" in message:
             recent_persona = message["persona"]
@@ -57,14 +101,6 @@ if __name__ == "__main__":
     persona_prompt_path = os.path.join(persona_dir, f"{recent_persona}.txt")
     persona = load_prompt(persona_prompt_path)
 
-    # 임시 사용자 정보
-    topic = "사용자는 행복을 느끼지 못하고, 자신의 존재 가치를 낮게 평가하는 감정을 표현하고 있습니다. 이러한 감정은 불확실한 미래에 대한 두려움과 함께, 자신의 소중함을 잃었다고 느끼는 것에서 비롯된 것으로 보입니다. 이는 자아 존중감의 결여와 직결되며, 자아 이미지가 부정적으로 형성될 가능성을 내포하고 있습니다." 
-    emotion = "- 불안: 20%\n- 지침: 60%\n- 기쁨: 20%"
-    distortion = "- 과잉 일반화\n- 감정적 추론"
-    mainMission = "저녁 먹고 10분 명상하기"
-    subMission = "마음에 들었던 순간 1가지 기록하기"
-    calendar = "- 오후 7시 영화 예매\n- 오후 9시 친구와 영상통화"
-
     # prompt 채우기
     filled_prompt = prompt.format(
         persona=persona,
@@ -72,8 +108,7 @@ if __name__ == "__main__":
         emotion=emotion,
         distortion=distortion,
         mainMission=mainMission,
-        subMission=subMission,
-        calendar=calendar 
+        subMission=subMission 
         )
 
     response = generate_greet(filled_prompt, args.userId, args.chatId)

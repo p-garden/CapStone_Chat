@@ -78,34 +78,38 @@ def get_user_info(userId):
    
 def save_analysis_report(userId, chatId, topic, emotion, distortion, mainMission, subMission, timestamp):
     """
-    분석 결과를 DB에 저장 (존재 시 업데이트, 없으면 생성)
+    분석 리포트를 reports 배열에 누적 저장
     """
-    analysis_doc = {
-        "userId": userId,
-        "chatId": chatId,
+    doc = analysis_collection.find_one({"userId": userId, "chatId": chatId})
+    existing_reports = doc["reports"] if doc and "reports" in doc else []
+    reportId = len(existing_reports) + 1
+
+    new_report = {
+        "reportId": reportId,
         "topic": topic,
         "emotion": emotion,
         "distortion": distortion,
         "mainMission": mainMission,
         "subMission": subMission,
-        "timestamp": datetime.now().isoformat()
+        "timestamp": timestamp
     }
+
     analysis_collection.update_one(
         {"userId": userId, "chatId": chatId},
-        {"$set": analysis_doc},
+        {"$push": {"reports": new_report}},
         upsert=True
     )
-    print(f"analysis report for {chatId} has been saved successfully!")
+    print(f"analysis report for chatId {chatId} has been appended successfully!")
 
 
 
 # 분석 리포트 불러오기 함수
 def get_analysis_report(userId, chatId):
     """
-    특정 userId와 chatId에 해당하는 분석 리포트를 불러옴
+    특정 userId와 chatId에 해당하는 분석 리포트 중 reportId가 가장 큰 것(최신)을 불러옴
     """
-    report = analysis_collection.find_one({"userId": userId, "chatId": chatId})
-    if report:
-        return report
-    else:
-        return None
+    doc = analysis_collection.find_one({"userId": userId, "chatId": chatId})
+    if doc and "reports" in doc and isinstance(doc["reports"], list) and doc["reports"]:
+        latest_report = max(doc["reports"], key=lambda r: r.get("reportId", 0))
+        return latest_report
+    return None

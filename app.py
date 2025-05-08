@@ -122,12 +122,7 @@ class GreetRequest(BaseModel):
     name: str
     age: int
     gender: str
-    topic: str
-    emotion: str
-    distortion: str
-    mainMission: str
-    subMission: str
-    calendar: str
+
 
 @app.post("/generate_greet")
 async def generate_greet_endpoint(request: GreetRequest):
@@ -153,9 +148,8 @@ async def generate_greet_endpoint(request: GreetRequest):
         emotion=request.emotion,
         distortion=request.distortion,
         mainMission=request.mainMission,
-        subMission=request.subMission,
-        calendar=request.calendar
-    )
+        subMission=request.subMission    
+        )
 
     reply = generate_greet(filled_prompt, request.userId, request.chatId)
     return {

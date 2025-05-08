@@ -16,9 +16,6 @@
 - 메인 미션: {mainMission}
 - 서브 미션: {subMission}
 
-[ 오늘의 일정]
-{calendar}
-
 ---
 
 [ 페르소나 설정 정보 ]
