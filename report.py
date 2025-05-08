@@ -12,7 +12,7 @@ from config import set_openai_api_key
 set_openai_api_key()
 
 # ✅ 프롬프트 템플릿 로드
-def load_prompt_template(filename: str = "report.txt") -> str:
+def load_prompt_template(filename: str = "report_prompt.txt") -> str:
     prompt_path = Path(__file__).resolve().parent / "prompts" / filename
     with open(prompt_path, "r", encoding="utf-8") as f:
         return f.read()
@@ -38,7 +38,8 @@ def generate_analysis_report(chatId: int, userId: int) -> dict:
     # 3. 프롬프트 텍스트 채우기
     prompt_template = load_prompt_template()
     prompt = prompt_template.replace("{dialogue}", formatted_dialogue)\
-                            .replace("{chatId}", str(chatId)) 
+                            .replace("{chatId}", str(chatId))\
+                            .replace("{userId}", str(userId))
 
     # 4. OpenAI GPT 호출
     from config import get_config
