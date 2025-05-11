@@ -1,0 +1,15 @@
+# 가상환경, 캐시, 대용량 폴더 제외
+venv/
+__pycache__/
+*.pyc
+*.pkl
+*.mp3
+*.wav
+*.pt
+*.pth
+results/
+logs/
+datasets/
+notebooks/
+.idea/
+.DS_Store

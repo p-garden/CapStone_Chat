@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 from openai import OpenAI
 from fastapi import HTTPException  # ✅ 추가
-from datetime import datetime
 
 from DB import get_chat_log, save_analysis_report
 from config import set_openai_api_key

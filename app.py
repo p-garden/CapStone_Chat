@@ -20,7 +20,7 @@ rsync -avz \
   --exclude 'results' \
   -e "ssh -i ~/Desktop/code/CapStone/PG.pem" \
   ~/Desktop/code/CapStone/ \
-  ubuntu@13.125.242.109:~/CapStone
+  ubuntu@43.200.169.229:~/CapStone
 
   git push team-repo main:PG
   git checkout PG
@@ -40,7 +40,9 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from report import generate_analysis_report  
-  
+from datetime import datetime, timedelta, timezone
+
+kst = timezone(timedelta(hours=9))
 
 app = FastAPI()
 
@@ -60,6 +62,7 @@ app.add_middleware(
 )
 # static 폴더 서빙 추가
 app.mount("/static", StaticFiles(directory="static"), name="static")
+kst = timezone(timedelta(hours=9))
 
 
 class ChatRequest(BaseModel):
@@ -98,7 +101,7 @@ async def start_chat_endpoint(request: ChatRequest):
         "userId" : request.userId,
         "chatId" : request.chatId,
         "botResponse": botResponse,
-        "timestamp" : datetime.now().isoformat()
+        "timestamp": datetime.now(kst).isoformat()
     }
 
 @app.get("/get_chat_log/{chatId}")
@@ -175,8 +178,8 @@ async def voice_chat(request: VoiceChatRequest):
         "userId": request.userId,
         "chatId": request.chatId,
         "botResponse": bot_response,
-        "audioResponse": f"http://127.0.0.1:8000/static/{mp3_filename}",
-        "timestamp": datetime.now().isoformat()
+        "audioResponse": f"http://43.200.169.229:8000/static/{mp3_filename}",
+        "timestamp": datetime.now(kst).isoformat()
     }
 
 from report import generate_analysis_report
@@ -184,7 +187,7 @@ class ReportRequest(BaseModel):
     userId: int
     chatId: int
 
-@app.post("/generate_report/")
+@app.post("/generate_report")
 async def generate_report_post(request: ReportRequest):
     try:
         print("🚀 Report 요청:", request.chatId, request.userId)
@@ -199,12 +202,12 @@ async def generate_report_post(request: ReportRequest):
             distortion=report["missionDistortion"],
             mainMission=report["mainMission"],
             subMission=report["subMission"],
-            timestamp=str(datetime.now())
+            timestamp=datetime.now(kst).isoformat()
         )
         return {
             "userId": request.userId,
             "chatId": request.chatId,
-            "timestamp": str(datetime.now()),
+            "timestamp": datetime.now(kst).isoformat(),
             "report": report
         }
 
