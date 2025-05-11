@@ -10,6 +10,8 @@ from fastapi import FastAPI, HTTPException
 import requests
 from datetime import datetime, timedelta, timezone
 import os
+from agents.subllm_agent import classify_topic # 새로 만든 함수가 있는 파일에서 import
+
 # API 키 설정
 set_openai_api_key()
 kst = timezone(timedelta(hours=9))
@@ -47,11 +49,14 @@ class TherapySimulation:
         reply = result["reply"]
         analysis = result.get("analysis", {})
 
+        topic_result = classify_topic(message)
+
         user_entry = {
             "role": "client",
             "message": message,
             "timestamp": timestamp,
-            "analysis": analysis
+            "analysis": analysis,
+            "topic": topic_result
         }
 
         bot_entry = {

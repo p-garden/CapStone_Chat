@@ -200,8 +200,7 @@ async def generate_report_post(request: ReportRequest):
             topic=report["missionTopic"],
             emotion=report["missionEmotion"],
             distortion=report["missionDistortion"],
-            mainMission=report["mainMission"],
-            subMission=report["subMission"],
+            missions=report["missions"],
             timestamp=datetime.now(kst).isoformat()
         )
         return {

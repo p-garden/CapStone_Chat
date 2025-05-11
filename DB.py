@@ -76,7 +76,7 @@ def get_user_info(userId):
         return None
     
    
-def save_analysis_report(userId, chatId, topic, emotion, distortion, mainMission, subMission, timestamp):
+def save_analysis_report(userId, chatId, topic, emotion, distortion, missions, timestamp):
     """
     분석 리포트를 reports 배열에 누적 저장
     """
@@ -89,8 +89,7 @@ def save_analysis_report(userId, chatId, topic, emotion, distortion, mainMission
         "topic": topic,
         "emotion": emotion,
         "distortion": distortion,
-        "mainMission": mainMission,
-        "subMission": subMission,
+        "missions": missions,
         "timestamp": timestamp
     }
 
