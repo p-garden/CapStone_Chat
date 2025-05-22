@@ -12,3 +12,4 @@ outputs/
 .env
 static/
 .DockerFile
+CBt.txt
