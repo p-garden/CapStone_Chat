@@ -1,33 +1,3 @@
-"""1
-ssh -i "PG.pem" ubuntu@43.200.169.229
-cd ~/CapStone 
-source venv/bin/activate
-docker로 넘어가기
-uvicorn app:app --host 0.0.0.0 --port 8000
-http://0.0.0.0:8000/docs
-http://43.200.169.229:8000
-{
-  "userId": 2,
-  "chatId": 2,
-  "persona": "26살_한여름",
-  "message": "오늘도 기분이 너무 좋아",
-  "name": "박정원",
-  "age": 26,
-  "gender": "남자"
-}
-rsync -avz \
-  --exclude '__pycache__' \
-  --exclude 'results' \
-  -e "ssh -i ~/Desktop/code/CapStone/PG.pem" \
-  ~/Desktop/code/CapStone/ \
-  ubuntu@43.200.169.229:~/CapStone
-
-  git push team-repo main:PG
-  git checkout PG
-  git pull team-repo PG --rebase
-  git push team-repo PG
-"""
-import json
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from chat import generate_response_from_input

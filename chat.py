@@ -82,15 +82,3 @@ def generate_response_from_input(persona: str, chatId: int, userId: int, name: s
         gender=gender
     )
     return sim.run_single_turn(message)
-
-
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--output_file", default=None)
-    parser.add_argument("--persona_type", required=True)
-    parser.add_argument("--chat_id", required=True)  # chat_id 추가
-    parser.add_argument("--user_id", required=True)  # 사용자 이름
-    args = parser.parse_args()
-
-#    run_chat_with_args(args.output_file, args.persona_type, args.chat_id, args.user_id)
