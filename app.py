@@ -71,7 +71,7 @@ async def start_chat_endpoint(request: ChatRequest):
     return {
         "userId" : request.userId,
         "chatId" : request.chatId,
-        "botResponse": botResponse,
+        "botResponse": botResponse["reply"],
         "timestamp": datetime.now(kst).isoformat()
     }
 
@@ -134,7 +134,7 @@ async def voice_chat(request: VoiceChatRequest):
     )
     if isinstance(response_data, dict):
         bot_response = response_data.get("reply", "")
-        emotion = response_data.get("analysis", {}).get("감정", "없음")
+        emotion = response_data.get("emotion", "없음")
     else:
         bot_response = response_data
         emotion = "없음"

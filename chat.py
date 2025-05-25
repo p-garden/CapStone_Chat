@@ -44,17 +44,16 @@ class TherapySimulation:
         self.evaluator_agent = EvaluatorAgent()
 
     def run_single_turn(self, message: str):
-        timestamp = datetime.now(kst).isoformat()
         result = self.counselor_agent.generate_response(self.history, message)
         reply = result["reply"]
-        analysis = result.get("analysis", {})
+        analysis = result["analysis"]
 
         topic_result = classify_topic(message)
 
         user_entry = {
             "role": "client",
             "message": message,
-            "timestamp": timestamp,
+            "timestamp": datetime.now().isoformat(),
             "analysis": analysis,
             "topic": topic_result
         }
@@ -69,8 +68,10 @@ class TherapySimulation:
         self.history.extend([user_entry, bot_entry])
         save_chat_log(self.userId, self.chatId, user_entry, bot_entry)
 
-        return reply
-
+        return {
+            "reply": reply,
+            "emotion": analysis.get("감정", "없음")
+        }
 def generate_response_from_input(persona: str, chatId: int, userId: int, name: str, age: int, 
                                  gender: str, message: str):
     sim = TherapySimulation(

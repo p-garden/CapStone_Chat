@@ -22,9 +22,9 @@ PERSONA_SPEAKER_MAP = {
 
 def get_emotion_settings(emotion):
     if emotion in ["기쁨", "기대", "신뢰"]:
-        return {"emotion": "2", "emotion_strength": "2"}
+        return {"emotion": "2", "emotion_strength": "2", "pitch": "-5"}
     elif emotion in ["슬픔", "공포", "분노", "혐오"]:
-        return {"emotion": "1", "emotion_strength": "2"}
+        return {"emotion": "1", "emotion_strength": "2", "pitch": "5"}
     elif emotion == "놀람":
         return {"emotion": "0", "emotion_strength": "1"}
     else:
@@ -58,9 +58,8 @@ def clova_tts(text, persona_type, emotion, output_path):
         data["emotion"] = emotion_settings["emotion"]
         data["emotion_strength"] = emotion_settings["emotion_strength"]
 
-    # 민지원 전용 설정 추가
-    if persona_type == "8살_민지원":
-        data["alpha"] = "3"
+    if "pitch" in emotion_settings:
+        data["pitch"] = emotion_settings["pitch"]
 
     response = requests.post(CLOVA_API_URL, headers=headers, data=data)
     if response.status_code == 200:
