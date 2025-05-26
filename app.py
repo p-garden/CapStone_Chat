@@ -141,7 +141,9 @@ async def voice_chat(request: VoiceChatRequest):
 
     # 4. Clova TTS
     from config import AUDIO_DIR
-    mp3_filename = f"voice_response_{request.userId}_{request.chatId}.mp3"
+    now = datetime.now()
+    safe_timestamp = now.strftime("%Y%m%dT%H%M%S")  # 예: 20250526T183527
+    mp3_filename = f"voice_response_{request.userId}_{request.chatId}_{safe_timestamp}.mp3"
     mp3_path = AUDIO_DIR / mp3_filename
     clova_tts(bot_response, persona_type=request.persona, emotion=emotion, output_path=str(mp3_path))
 
