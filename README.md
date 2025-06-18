@@ -1,58 +1,118 @@
-# CapStone_Chat
-2025-1학기 세종대학교 캡스톤 "심리상담 서비스" AI파트  
-CapStone_Chat/    
-CapStone/  
-│  
-├── app.py                # FastAPI 서버 메인 파일 (API 라우터 정의)  
-├── chat.py               # 상담 세션 관리 및 대화 처리 (TherapySimulation 클래스)  
-├── DB.py                 # MongoDB 연결 및 대화/사용자 정보 저장/조회 함수  
-├── report.py             # 채팅기록 분석결과 진행   
-├── config.py             # 설정 로드 (API 키, 환경변수 등)  
-├── DockerFile            # Docker 빌드 파일  
-├── README.md             # 프로젝트 소개 문서  
-├── requirements.txt      # 필요한 Python 패키지 목록  
-│  
-├── agents/               # 🤖 에이전트 관련 코드 모음  
-│   ├── counselor_agent.py    # 메인 상담사 응답 생성 (LLM 호출)  
-│   ├── evaluator_agent.py    # 대화 평가 및 요약 담당  
-│   └── subllm_agent.py       # 감정, 왜곡 등 서브 모델 분석  
-│  
-├── utils/               # 🤖 에이전트 관련 코드 모음   
-├── tts_clova.py        #Clova TTS API를 활용해 페르소나와 감정에 맞는 음성(mp3)을 생성
-│    
-├── starter/               # 🤖 에이전트 관련 코드 모음     
-├── generate_greet.py      #사용자 정보와 상담 분석 결과를 바탕으로, 페르소나가 먼저 인사말을 생성해 대화를 시작하는 기능을 제공합니다.  
-├── first.txt              # 사용자 정보와 상담 데이터를 기반으로 챗봇이 먼저 인삿말을 생성하는 트리거 프롬프트  
-│            
-├── prompts/       
-├── cure/                     # 상담 기법 (치료 방식) 프롬프트    
-│   ├── 없음.txt                 # 치료 전략이 아직 없을 경우    
-│   ├── ACT.txt                 # 수용전념치료 (Acceptance & Commitment Therapy)    
-│   ├── CBT.txt                 # 인지행동치료 (Cognitive Behavioral Therapy)    
-│   ├── PCT.txt                 # 인간중심치료 (Person-Centered Therapy)    
-│   ├── PDT.txt                 # 정신역동치료 (Psychodynamic Therapy)    
-│   └── SFBT.txt                # 해결중심치료 (Solution-Focused Brief Therapy)  
-│  
-├── react/                    # 내담자의 반응 유형 (태도) 프롬프트  
-│   ├── 없음.txt                 # 반응 없음 또는   
-│   ├── 의존적.txt               # 지나치게 의존적인 태도  
-│   ├── 저항적.txt               # 방어적, 회피적인 반응  
-│   ├── 적대적.txt               # 공격적, 반항적인 반응  
-│   └── 협조적.txt               # 긍정적이고 열린 태도  
-│  
-├── stage/                    # 상담 단계별 프롬프트  
-│   ├── 없음.txt                 # 단계 미정  
-│   ├── 1단계.txt                # 관계 형성 및 라포 구축 단계  
-│   ├── 2단계.txt                # 감정 탐색 및 문제 인식  
-│   ├── 3단계.txt                # 통찰 및 인지 재구성  
-│   ├── 4단계.txt                # 행동 변화 유도  
-│   └── 5단계.txt                # 상담 마무리 및 재발 방지  
-│  
-├── 8살_민지원.txt  
-├──  26살_한여름.txt  
-├──  55살_김서연.txt  
-├── counselor_prompt.txt     # 상담사 공통 응답 프레임워크  
-├── evaluation_combined.txt  # 평가 (감정 변화, 전략 평가 등) 통합 프롬프트     
-├── prompt_builder.py        # 위의 프롬프트들을 조립하여 GPT 입력 생성  
-├── subllm_prompt.txt        # 감정 분석/왜곡 탐지용 서브 LLM 프롬프트    
-└── report_prompt.txt        #내담자의 대화 내용을 바탕으로 상담 주제, 감정 비율, 인지 왜곡, 맞춤형 미션을 자동 분석하여 JSON 리포트를 생성하는 전문 심리상담 평가프롬프트입니다.    
+# 토닥이: 라이프 코팅을 통한 멘탈케어 시스템
+
+**"마음이 무거울 때 곁에 있어주는 친구"**  
+토닥이는 AI 기반 종합 심리상담 플랫폼입니다.  
+사용자의 감정을 분석하고, 심리상담 이론에 기반한 맞춤형 대화, 감정 기록, 라이프 코칭 미션을 제공합니다.
+<img width="691" alt="스크린샷 2025-05-31 오후 4 44 20" src="https://github.com/user-attachments/assets/866f2557-9ea7-4517-8876-00f9c7e84fbc" />
+
+---
+
+### 📅 개발 기간
+**2025.03 ~ 2025.05**
+
+---
+
+### 👥 팀원
+
+<table>
+  <tr>
+    <td align="center"><img src="https://github.com/p-garden.png" width="100px;" alt="박정원"/><br /><sub><b>박정원</b></sub><br /><a href="https://github.com/p-garden">@p-garden</a><br />AI<br/>AI Server&AI DB</td>
+    <td align="center"><img src="https://github.com/rudals6151.png" width="100px;" alt="김경민"/><br /><sub><b>김경민</b></sub><br /><a href="https://github.com/rudals6151">@rudals6151</a><br />AI<br/>Chatbot Dev</td>
+    <td align="center"><img src="https://github.com/ksunj67.png" width="100px;" alt="김선재"/><br /><sub><b>김선재</b></sub><br /><a href="https://github.com/ksunj67">@ksunj67</a><br />AI<br/>Prompts Engineering</td>
+    <td align="center"><img src="https://github.com/Ss0Mae.png" width="100px;" alt="조성민"/><br /><sub><b>조성민</b></sub><br /><a href="https://github.com/Ss0Mae">@Ss0Mae</a><br />Backend
+    <td align="center"><img src="https://github.com/sehxxnee.png" width="100px;" alt="김세현"/><br /><sub><b>김세현</b></sub><br /><a href="https://github.com/sehxxnee">@sehxxnee</a><br />Frontend
+
+
+  </tr>
+</table>
+
+---
+
+### 💡 주요 기능
+
+#### 🗣️ 대화 기능 
+
+- **AI 챗봇 기반 심리 상담**  
+  사용자의 감정 표현과 심리 상태를 분석하여 상담을 진행합니다.
+
+- **상담 전략 자동 생성**  
+  사용자 태도, 상담 단계, 필요한 상담 이론(CBT, ACT 등)을 파악해 적절한 상담 전략을 적용합니다.
+
+- **맞춤형 대화 응답 생성**  
+  감정 상태 및 인지 왜곡 유형에 따라 개인화된 상담 멘트를 제공합니다.
+
+- **음성 입출력 기능 (STT/TTS)**  
+  음성 입력과 감정 기반 목소리 톤 적용 출력으로 더 자연스러운 상호작용을 지원합니다.
+
+- **페르소나 상담자 선택**  
+  연령대와 성격 기반으로 3명의 상담자 페르소나 중 자동 매칭하여 상담을 제공합니다.
+
+---
+
+#### 🧩 부가기능 
+
+- **캘린더 연동**  
+  Google Calendar와 연동해 사용자 일정을 기반으로 상담 타이밍을 조정하거나 선제적 대화를 시도합니다.
+
+- **상담 분석 리포트**  
+  대화 내용을 기반으로 주요 상담 주제, 감정 변화 통계, 인지 왜곡 유형 등을 분석해 제공합니다.
+
+- **라이프 코치 미션**  
+  사용자의 감정 흐름과 고민 패턴을 분석하여 매일 맞춤형 실천 미션을 제안합니다.
+
+- **심리 검사 기능**  
+  감정 및 고민 유형에 따라 심리 검사를 제공하고, 그 결과에 기반한 상담 방향을 제시합니다.
+
+- **먼저 말걸기 기능**  
+  일정 정보 및 이전 대화 흐름을 기반으로 챗봇이 먼저 말을 걸어 지속적인 케어를 유도합니다.
+
+- **상담 자동 평가 시스템**  
+  상담 전후 감정 점수 변화 및 CSCT 기준에 따라 상담 품질을 자동으로 평가합니다.
+
+---
+
+###  🖼️ 주요 기능 시연 
+#### 랜딩 페이지
+
+
+https://github.com/user-attachments/assets/1b5c2882-dcbb-4a82-9714-a6a722a7cf99
+
+
+
+#### 🗣️ 1. 상담 기능 
+<img width="700" alt="스크린샷 2025-05-31 오후 5 07 00" src="https://github.com/user-attachments/assets/b889b909-a3e6-401e-9a0c-35ace46923ef" />  
+
+#### 🎯 2. 라이프코치 미션 추천 
+<img width="700" alt="스크린샷 2025-05-31 오후 5 08 33" src="https://github.com/user-attachments/assets/7ff52b17-7407-4731-a139-8e21aea2da84" /> 
+
+#### 📊 3. 감정 분석 리포트  
+<img width="700" alt="스크린샷 2025-05-31 오후 5 09 40" src="https://github.com/user-attachments/assets/98ff4d3f-e0ce-42e3-a3af-962aa16f5462" />  
+
+#### 📅 4. 캘린더 연동 & 먼저 말 걸기 기능 
+<img width="418" alt="스크린샷 2025-05-31 오후 5 10 11" src="https://github.com/user-attachments/assets/fbad385c-9df0-4c46-9dc8-0e51d3cd5f31" />
+<img width="268" alt="스크린샷 2025-05-31 오후 5 10 30" src="https://github.com/user-attachments/assets/10a7d1ba-33bc-447c-a941-54d9d3404f4e" />  
+
+#### 🧠 5. 심리 검사 기능 
+<img width="725" alt="스크린샷 2025-05-31 오후 5 12 29" src="https://github.com/user-attachments/assets/7ab7b19e-2fd1-434c-8734-3ace60640798" />  
+
+
+---
+
+
+### 🗺️  아키텍처
+<img width="1189" alt="스크린샷 2025-05-31 오후 5 03 03" src="https://github.com/user-attachments/assets/5bf270e7-92a6-4df1-81fb-2ea49fbcbe90" />
+
+<img width="1159" alt="스크린샷 2025-05-31 오후 5 03 57" src="https://github.com/user-attachments/assets/ec7db54e-8670-4add-8d79-5883fe961875" />
+
+
+---
+<!--
+
+**Here are some ideas to get you started:**
+
+🙋‍♀️ A short introduction - what is your organization all about?
+🌈 Contribution guidelines - how can the community get involved?
+👩‍💻 Useful resources - where can the community find your docs? Is there anything else the community should know?
+🍿 Fun facts - what does your team eat for breakfast?
+🧙 Remember, you can do mighty things with the power of [Markdown](https://docs.github.com/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
+-->
